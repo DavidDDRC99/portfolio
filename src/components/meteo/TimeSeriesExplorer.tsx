@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useRef, useState } from "react";
-import { scaleLinear, scaleTime } from "d3-scale";
+import { scaleLinear, scaleUtc } from "d3-scale";
 import { line, area, curveMonotoneX } from "d3-shape";
 import { bisector, extent } from "d3-array";
 import { stations, stationsData, variables, variableById, type StationId, type VariableId } from "@/lib/meteo";
@@ -71,7 +71,7 @@ export function TimeSeriesExplorer() {
   // ── Layout
   const H = width < 640 ? 260 : 340;
   const m = { t: 16, r: 16, b: 28, l: 44 };
-  const x = scaleTime().domain(domain).range([m.l, width - m.r]);
+  const x = scaleUtc().domain(domain).range([m.l, width - m.r]);
 
   const visibleVals = series.flatMap((s) => s.points.filter((p) => p.v !== null && p.t >= domain[0] && p.t <= domain[1]).map((p) => p.v as number));
   const [vmin, vmax] = visibleVals.length ? (extent(visibleVals) as [number, number]) : [0, 1];
@@ -274,7 +274,7 @@ function Brush({
 }) {
   const H = 56;
   const m = { l: 44, r: 16, t: 6, b: 6 };
-  const x = scaleTime().domain(fullDomain).range([m.l, width - m.r]);
+  const x = scaleUtc().domain(fullDomain).range([m.l, width - m.r]);
   const all = series.flatMap((s) => s.points.map((p) => p.v).filter((v): v is number => v !== null));
   const [a, b] = all.length ? (extent(all) as [number, number]) : [0, 1];
   const y = scaleLinear().domain([a, b]).range([H - m.b, m.t]);
