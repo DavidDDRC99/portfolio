@@ -24,7 +24,7 @@ export default function TrainingDashboardPage() {
           <Link href="/applications/" className="hover:text-signal">Applications</Link> <span aria-hidden>/</span> <span className="text-fog-300">training-dashboard</span>
         </nav>
         <p className="label mb-4" data-reveal>Application · Personal tool</p>
-        <h1 className="max-w-4xl text-4xl font-light leading-[1.08] tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>One place for very different kinds of training</h1>
+        <h1 className="max-w-4xl text-4xl font-bold leading-[1.0] tracking-[-0.045em] text-fog-50 sm:text-5xl" data-reveal>One place for very different kinds of training</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-300" data-reveal>
           Elliptical sessions, long jump and calisthenics progressions are measured in completely different ways. This dashboard records all of them in one place, with parameters specific to each exercise, a history of every session and charts to follow progress.
         </p>
@@ -49,8 +49,8 @@ export default function TrainingDashboardPage() {
         <SectionHeader index="02" kicker="Modules" title="Each discipline tracks what matters for it">
           <p>Exercise-specific parameters instead of one generic form.</p>
         </SectionHeader>
-        <div className="grid gap-px bg-ink-600 md:grid-cols-2" data-reveal>
-          <div className="bg-ink-900 p-6">
+        <div className="grid gap-3 md:grid-cols-2" data-reveal>
+          <div className="rounded-2xl bg-ink-850 p-6">
             <p className="label mb-3">Training modules</p>
             <ul className="divide-y divide-ink-700 border-y border-ink-700">
               {MODULES.map((m, i) => (
@@ -58,7 +58,7 @@ export default function TrainingDashboardPage() {
               ))}
             </ul>
           </div>
-          <div className="bg-ink-900 p-6">
+          <div className="rounded-2xl bg-ink-850 p-6">
             <p className="label mb-3">Exercise-specific parameters</p>
             <div className="flex flex-wrap gap-1.5">{PARAMETERS.map((p) => <Tag key={p}>{p}</Tag>)}</div>
             <p className="mt-4 text-sm text-fog-400">Each module uses the subset of parameters that makes sense for it.</p>
@@ -69,13 +69,13 @@ export default function TrainingDashboardPage() {
 
       <Container as="section" className="pt-24">
         <SectionHeader index="03" kicker="Features" title="What it does" />
-        <div className="grid gap-px bg-ink-600 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3">
           {[
             ["Log", "Forms for data entry adapted to each exercise."],
             ["Review", "Historical records per module to see every past session."],
             ["Visualise", "Interactive charts showing progression over time, with visual feedback on each entry."],
           ].map(([k, v]) => (
-            <div key={k} className="bg-ink-900 p-6" data-reveal>
+            <div key={k} className="rounded-2xl bg-ink-850 p-6" data-reveal>
               <h3 className="text-fog-50">{k}</h3>
               <p className="mt-2 text-sm text-fog-400">{v}</p>
             </div>

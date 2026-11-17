@@ -8,6 +8,8 @@ export type Profile = {
   tagline: string;
   intro: string[];
   location: string;
+  /** Path under /public, e.g. "/images/portrait.png". null = no photo yet (hero shows isobars only). */
+  portrait: string | null;
 };
 
 export type Contact = {

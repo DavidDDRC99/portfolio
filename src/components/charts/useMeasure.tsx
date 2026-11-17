@@ -33,7 +33,7 @@ export function Segmented<T extends string>({
   size?: "sm" | "md";
 }) {
   return (
-    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap border border-ink-600">
+    <div role="radiogroup" aria-label={label} className="inline-flex flex-wrap gap-0.5 rounded-full border border-ink-600 bg-ink-850 p-0.5">
       {options.map((o) => {
         const active = o.value === value;
         return (
@@ -45,9 +45,9 @@ export function Segmented<T extends string>({
             disabled={o.disabled}
             title={o.title}
             onClick={() => onChange(o.value)}
-            className={`border-r border-ink-600 font-mono transition-colors last:border-r-0 disabled:cursor-not-allowed disabled:opacity-30 ${
+            className={`rounded-full font-mono transition-colors disabled:cursor-not-allowed disabled:opacity-30 ${
               size === "sm" ? "px-2.5 py-1.5 text-[11px]" : "px-3 py-2 text-[12px]"
-            } ${active ? "bg-fog-50 text-ink-900" : "text-fog-300 hover:bg-ink-800 hover:text-fog-50"}`}
+            } ${active ? "bg-fog-50 text-white" : "text-fog-300 hover:bg-ink-800 hover:text-fog-50"}`}
           >
             {o.label}
           </button>

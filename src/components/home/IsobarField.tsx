@@ -11,7 +11,15 @@ type Centre = { x: number; y: number; vx: number; vy: number; amp: number; r: nu
 
 const LEVELS = 22;
 
-export function IsobarField({ className = "" }: { className?: string }) {
+export function IsobarField({
+  className = "",
+  major = "rgba(255,255,255,0.55)",
+  minor = "rgba(255,255,255,0.16)",
+}: {
+  className?: string;
+  major?: string;
+  minor?: string;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -84,7 +92,7 @@ export function IsobarField({ className = "" }: { className?: string }) {
 
       for (let l = 1; l < LEVELS; l++) {
         const level = min + ((max - min) * l) / LEVELS;
-        const major = l % 5 === 0;
+        const isMajor = l % 5 === 0;
         ctx.beginPath();
         for (let j = 0; j < rows - 1; j++) {
           for (let i = 0; i < cols - 1; i++) {
@@ -117,8 +125,8 @@ export function IsobarField({ className = "" }: { className?: string }) {
             }
           }
         }
-        ctx.strokeStyle = major ? "rgba(92,200,224,0.42)" : "rgba(170,180,195,0.13)";
-        ctx.lineWidth = major ? 1 : 0.75;
+        ctx.strokeStyle = isMajor ? major : minor;
+        ctx.lineWidth = isMajor ? 1.1 : 0.8;
         ctx.stroke();
       }
     };
@@ -145,7 +153,7 @@ export function IsobarField({ className = "" }: { className?: string }) {
       ro.disconnect();
       io.disconnect();
     };
-  }, []);
+  }, [major, minor]);
 
   return <canvas ref={canvasRef} aria-hidden className={`pointer-events-none h-full w-full ${className}`} />;
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container, SectionHeader, Tag } from "@/components/ui/Container";
+import { IsobarField } from "@/components/home/IsobarField";
 import { StationMap } from "@/components/meteo/StationMap";
 import { TimeSeriesExplorer } from "@/components/meteo/TimeSeriesExplorer";
 import { Climatology } from "@/components/meteo/Climatology";
@@ -45,47 +46,55 @@ export default function VOEvolutionPage() {
 
   return (
     <article>
-      {/* ── Header ───────────────────────────────────────── */}
-      <header className="relative overflow-hidden border-b border-ink-700">
-        <div className="grid-bg absolute inset-0 -z-10 opacity-40 [mask-image:radial-gradient(ellipse_at_70%_20%,black,transparent_70%)]" />
-        <Container className="pb-14 pt-16 sm:pt-24">
-          <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[11px] text-fog-500">
-            <Link href="/projects/" className="hover:text-signal">Projects</Link> <span aria-hidden>/</span> <span className="text-fog-300">VO-evolution</span>
-          </nav>
-          <p className="label mb-4" data-reveal>{project.kicker}</p>
-          <h1 className="max-w-4xl text-4xl font-light leading-[1.08] tracking-[-0.02em] text-fog-50 sm:text-5xl lg:text-6xl" data-reveal>
-            Three decades of weather in the Vallès Occidental
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-300" data-reveal>
-            What has actually changed in the local climate around Sabadell and Vacarisses? An end-to-end analysis of Meteocat observations, from raw downloads to trend tests and a neural network that reconstructs the daily temperature curve.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3" data-reveal>
-            <a href={project.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-fog-50 px-4 py-2.5 text-sm font-medium text-ink-900 hover:bg-signal">
-              View repository ↗
-            </a>
-            <div className="flex flex-wrap gap-1.5">{project.tags.map((t) => <Tag key={t}>{t}</Tag>)}</div>
-          </div>
-          <dl className="mt-12 grid grid-cols-2 border-l border-t border-ink-600 md:grid-cols-4" data-reveal>
-            {[
-              ["Stations", "3", "Sabadell ×2, Vacarisses"],
-              ["Longest record", `${vac.period[0].slice(0, 4)}–${vac.period[1].slice(0, 4)}`, "Vacarisses · 30-min"],
-              ["Daily observations", (nord.n_days_calendar + centre.n_days_calendar + vac.n_days_calendar).toLocaleString("en-GB"), "calendar days, all stations"],
-              ["Best ML RMSE", `${mlp.rmse.toFixed(2)} °C`, "30-min curve from daily data"],
-            ].map(([k, v, s]) => (
-              <div key={k} className="border-b border-r border-ink-600 p-4">
-                <dt className="label">{k}</dt>
-                <dd className="mt-2 font-mono text-xl text-fog-50 sm:text-2xl">{v}<span className="mt-1 block font-sans text-xs text-fog-500">{s}</span></dd>
+      {/* ── Header: cobalt panel in the hero style ─────── */}
+      <header className="px-2 pt-2 sm:px-4 sm:pt-3">
+        <div className="relative isolate overflow-hidden rounded-[22px] bg-signal text-white sm:rounded-[32px]">
+          <div className="absolute inset-0 -z-10"><IsobarField /></div>
+          <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_80%_at_70%_10%,transparent_30%,rgba(10,20,120,0.45))]" />
+          <Container className="pb-8 pt-10 sm:pb-10 sm:pt-14">
+            <nav aria-label="Breadcrumb" className="mb-10 font-mono text-[11px] text-white/60">
+              <Link href="/projects/" className="hover:text-white">Projects</Link> <span aria-hidden>/</span> <span className="text-white">VO-evolution</span>
+            </nav>
+            <p className="mb-5 font-mono text-[12px] uppercase tracking-[0.1em] text-white/80" data-reveal>{project.kicker} · {project.year}</p>
+            <h1 className="display text-[15vw] text-white sm:text-[12vw] lg:text-[150px]" data-reveal>
+              VO&#8209;evolution
+              <span className="sr-only">: three decades of weather in the Vallès Occidental</span>
+            </h1>
+            <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+              <p className="max-w-2xl text-lg leading-relaxed text-white/90 sm:text-xl" data-reveal>
+                Three decades of weather in the Vallès Occidental. What has actually changed around Sabadell and Vacarisses? An end-to-end analysis of Meteocat observations, from raw downloads to trend tests and a neural network that reconstructs the daily temperature curve.
+              </p>
+              <div className="flex flex-wrap items-center gap-2" data-reveal>
+                <a href={project.repo} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-fog-50 transition-transform hover:-translate-y-0.5">
+                  View repository ↗
+                </a>
               </div>
-            ))}
-          </dl>
-        </Container>
+            </div>
+            <div className="mt-6 flex flex-wrap gap-2" data-reveal>
+              {project.tags.map((t) => <span key={t} className="rounded-full border border-white/30 px-3 py-1 text-[12px] text-white/90">{t}</span>)}
+            </div>
+            <dl className="mt-12 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-4" data-reveal>
+              {[
+                ["Stations", "3", "Sabadell ×2, Vacarisses"],
+                ["Longest record", `${vac.period[0].slice(0, 4)}–${vac.period[1].slice(0, 4)}`, "Vacarisses · 30-min"],
+                ["Daily observations", (nord.n_days_calendar + centre.n_days_calendar + vac.n_days_calendar).toLocaleString("en-GB"), "calendar days, all stations"],
+                ["Best ML RMSE", `${mlp.rmse.toFixed(2)} °C`, "30-min curve from daily data"],
+              ].map(([k, v, s]) => (
+                <div key={k} className="rounded-2xl bg-white p-4 text-fog-50 sm:p-5">
+                  <dt className="text-[12px] text-fog-400">{k}</dt>
+                  <dd className="mt-6 text-2xl font-bold tracking-[-0.03em] sm:text-[32px]">{v}<span className="mt-1 block text-xs font-normal tracking-normal text-fog-500">{s}</span></dd>
+                </div>
+              ))}
+            </dl>
+          </Container>
+        </div>
       </header>
 
       {/* Sticky in-page navigation */}
-      <nav aria-label="Sections" className="sticky top-14 z-30 border-b border-ink-700 bg-ink-900/90 backdrop-blur-md">
+      <nav aria-label="Sections" className="sticky top-16 z-30 mt-3 border-b border-ink-700 bg-ink-900/90 backdrop-blur-md">
         <Container className="flex gap-1 overflow-x-auto py-2 font-mono text-[11.5px] [scrollbar-width:none]">
           {SUBNAV.map(([id, label], i) => (
-            <a key={id} href={`#${id}`} className="shrink-0 px-2.5 py-1.5 text-fog-400 transition-colors hover:text-fog-50">
+            <a key={id} href={`#${id}`} className="shrink-0 rounded-full px-3 py-1.5 text-fog-400 transition-colors hover:bg-ink-850 hover:text-fog-50">
               <span className="text-fog-500">{String(i + 1).padStart(2, "0")}</span> {label}
             </a>
           ))}
@@ -100,13 +109,13 @@ export default function VOEvolutionPage() {
             The project downloads observations from three stations of the Servei Meteorològic de Catalunya, cleans and merges them, and studies them from several angles: precipitation regimes, day and night temperatures, drought (SPEI), correlations between variables, and statistical downscaling with machine learning.
           </p>
         </SectionHeader>
-        <div className="grid gap-px bg-ink-600 md:ml-[220px] md:grid-cols-3">
+        <div className="grid gap-3 md:ml-[220px] md:grid-cols-3">
           {[
             ["Question", "Is there a detectable trend in temperature, heat extremes and rainfall at station level over the last 15–30 years?"],
             ["Approach", "Quality-controlled daily and 30-min series, non-parametric trend tests, LOESS smoothing, and a comparison of ML models against a physical baseline."],
             ["Output", "Seven analysis notebooks, a reusable statistics module with unit tests, a Dash dashboard, and this interactive page."],
           ].map(([k, v]) => (
-            <div key={k} className="bg-ink-900 p-5" data-reveal>
+            <div key={k} className="rounded-2xl bg-ink-850 p-5" data-reveal>
               <p className="label">{k}</p>
               <p className="mt-2 text-[15px] leading-relaxed text-fog-200">{v}</p>
             </div>
@@ -208,7 +217,7 @@ export default function VOEvolutionPage() {
       <Container as="section" className="pt-24">
         <div id="method" className="scroll-mt-28" />
         <SectionHeader index="06" kicker="Methodology" title="From API calls to conclusions" />
-        <ol className="grid border-l border-t border-ink-600 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {[
             ["Collect", "Download 30-min and daily observations from the Meteocat API, logging failed dates so gaps are known rather than silent."],
             ["Clean", "Merge, deduplicate and type the series; build daily aggregates; keep gaps explicit instead of interpolating."],
@@ -217,7 +226,7 @@ export default function VOEvolutionPage() {
             ["Model", "Feature engineering, temporal train/test split, grid-searched KNN, Random Forest and MLP against a sinusoidal baseline."],
             ["Communicate", "A Dash dashboard for rain, temperature and wind, and this page for a public overview."],
           ].map(([k, v], i) => (
-            <li key={k} className="border-b border-r border-ink-600 p-6" data-reveal>
+            <li key={k} className="rounded-2xl bg-ink-850 p-6" data-reveal>
               <div className="flex items-baseline justify-between">
                 <h3 className="text-fog-50">{k}</h3>
                 <span className="font-mono text-[11px] text-signal">{String(i + 1).padStart(2, "0")}</span>
@@ -232,13 +241,13 @@ export default function VOEvolutionPage() {
       <Container as="section" className="pt-24">
         <div id="stack" className="scroll-mt-28" />
         <SectionHeader index="07" kicker="Technical implementation" title="Tools and repository" />
-        <div className="grid gap-px bg-ink-600 md:grid-cols-[1fr_1fr_1.2fr]">
+        <div className="grid gap-3 md:grid-cols-[1fr_1fr_1.2fr]">
           {[
             ["Analysis", ["Python 3.10+", "Pandas · NumPy", "SciPy", "Matplotlib", "Jupyter"]],
             ["Modelling & testing", ["scikit-learn", "GridSearchCV", "spei (drought indices)", "pytest"]],
             ["Delivery", ["Dash · Plotly dashboard", "This page: Next.js, D3 scales, Leaflet", "Data build script: Pandas + statsmodels LOESS"]],
           ].map(([k, items]) => (
-            <div key={k as string} className="bg-ink-900 p-6" data-reveal>
+            <div key={k as string} className="rounded-2xl bg-ink-850 p-6" data-reveal>
               <p className="label mb-3">{k as string}</p>
               <ul className="space-y-1.5 text-fog-200">{(items as string[]).map((i) => <li key={i}>{i}</li>)}</ul>
             </div>
@@ -248,7 +257,7 @@ export default function VOEvolutionPage() {
           href={project.repo}
           target="_blank"
           rel="noopener noreferrer"
-          className="group mt-8 flex flex-col justify-between gap-4 border border-ink-600 p-6 transition-colors hover:border-signal-dim sm:flex-row sm:items-center"
+          className="group mt-8 flex flex-col justify-between gap-4 rounded-2xl border border-ink-600 bg-ink-850 p-6 transition-colors hover:border-signal-dim sm:flex-row sm:items-center"
           data-reveal
         >
           <div>

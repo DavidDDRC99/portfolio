@@ -26,7 +26,7 @@ export function Climatology() {
   const cx = (i: number) => (x(i) ?? 0) + x.bandwidth() / 2;
 
   return (
-    <div className="border border-ink-600 p-4 sm:p-5">
+    <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-fog-50">Mean seasonal cycle</h3>

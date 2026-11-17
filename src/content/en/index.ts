@@ -15,6 +15,7 @@ export const en: SiteContent = {
       "Outside coursework I build things for myself, from a long-term climate analysis of the Vallès Occidental to a training tracker and a Linux server that runs in my home.",
     ],
     location: "Barcelona area, Catalonia",
+    portrait: null, // TODO(David): add photo to public/images/portrait.png and set "/images/portrait.png"
   },
 
   contact: {

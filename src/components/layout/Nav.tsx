@@ -26,12 +26,10 @@ export function Nav() {
         scrolled || open ? "border-ink-700 bg-ink-900/90 backdrop-blur-md" : "border-transparent bg-transparent"
       }`}
     >
-      <div className="mx-auto flex h-14 max-w-[1240px] items-center justify-between px-4 sm:px-6 lg:px-10">
-        <Link href="/" className="group flex items-baseline gap-2" aria-label="David Domínguez Ruiz, home">
-          <span className="font-mono text-[13px] font-medium tracking-tight text-fog-50">DDR</span>
-          <span className="hidden font-mono text-[11px] text-fog-500 transition-colors group-hover:text-signal sm:inline">
-            / physics · atmosphere · code
-          </span>
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-4 sm:px-6 lg:px-10">
+        <Link href="/" className="group flex items-baseline gap-1" aria-label="David Domínguez Ruiz, home">
+          <span className="text-[17px] font-bold tracking-[-0.03em] text-fog-50">David Domínguez</span>
+          <span className="text-[11px] font-semibold text-signal">®</span>
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">
@@ -41,13 +39,12 @@ export function Nav() {
                 <Link
                   href={item.href}
                   aria-current={isActive(item.href) ? "page" : undefined}
-                  className={`relative px-3 py-2 text-[13px] transition-colors ${
-                    isActive(item.href) ? "text-fog-50" : "text-fog-400 hover:text-fog-100"
+                  className={`relative rounded-full px-3.5 py-1.5 text-[14px] transition-colors ${
+                    isActive(item.href) ? "bg-fog-50 text-white" : "text-fog-300 hover:text-fog-50"
                   }`}
                 >
                   {item.label}
-                  {isActive(item.href) && <span className="absolute inset-x-3 -bottom-[11px] h-px bg-signal" aria-hidden />}
-                </Link>
+                                  </Link>
               </li>
             ))}
           </ul>
@@ -55,7 +52,7 @@ export function Nav() {
 
         <button
           type="button"
-          className="-mr-2 p-2 font-mono text-[12px] text-fog-300 md:hidden"
+          className="-mr-1 rounded-full border border-ink-600 px-3.5 py-1.5 text-[13px] text-fog-100 md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((v) => !v)}
@@ -65,13 +62,13 @@ export function Nav() {
       </div>
 
       <nav id="mobile-nav" aria-label="Main mobile" hidden={!open} className="border-t border-ink-700 md:hidden">
-        <ul className="mx-auto max-w-[1240px] px-4 py-2">
+        <ul className="mx-auto max-w-[1280px] px-4 py-2">
           {nav.map((item, i) => (
             <li key={item.href}>
               <Link
                 href={item.href}
                 aria-current={isActive(item.href) ? "page" : undefined}
-                className="flex items-baseline gap-4 border-b border-ink-800 py-3 text-lg text-fog-100 last:border-0"
+                className="flex items-baseline gap-4 border-b border-ink-700 py-3 text-2xl font-semibold tracking-tight text-fog-50 last:border-0"
               >
                 <span className="font-mono text-[11px] text-fog-500">{String(i).padStart(2, "0")}</span>
                 <span className={isActive(item.href) ? "text-signal" : ""}>{item.label}</span>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getContent } from "@/lib/i18n";
-import { Container, Placeholder } from "@/components/ui/Container";
+import { Container, Placeholder, PageTitle } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -16,18 +16,19 @@ export default function ContactPage() {
     { k: "GitHub", v: contact.github, href: (v) => v, display: (v) => v.replace(/^https?:\/\//, ""), missing: "GitHub profile URL" },
   ];
   return (
-    <Container className="pb-10 pt-20 sm:pt-28">
-      <p className="label mb-4" data-reveal>Contact</p>
-      <h1 className="max-w-3xl text-4xl font-light tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>Let&apos;s talk</h1>
-      <p className="mt-5 max-w-xl text-lg text-fog-300" data-reveal>
+    <>
+    <PageTitle eyebrow="Contact" title="Let's" muted="talk">
+      <p>
         I&apos;m interested in roles and collaborations in meteorology, climate data, Earth observation, data science and renewable energy. Questions about any of the projects are welcome too.
       </p>
-      <ul className="mt-14 border-t border-ink-600" data-reveal>
+    </PageTitle>
+    <Container className="pb-10">
+      <ul className="border-t border-ink-600" data-reveal>
         {rows.map((r) => (
           <li key={r.k} className="grid gap-2 border-b border-ink-600 py-6 sm:grid-cols-[200px_1fr] sm:items-baseline">
             <span className="label">{r.k}</span>
             {r.v ? (
-              <a href={r.href(r.v)} target={r.k === "Email" ? undefined : "_blank"} rel="noopener noreferrer" className="group text-xl text-fog-50 hover:text-signal sm:text-2xl">
+              <a href={r.href(r.v)} target={r.k === "Email" ? undefined : "_blank"} rel="noopener noreferrer" className="group break-all text-2xl font-semibold tracking-[-0.03em] text-fog-50 hover:text-signal sm:text-4xl">
                 {r.display(r.v)} <span aria-hidden className="text-signal opacity-0 transition-opacity group-hover:opacity-100">↗</span>
               </a>
             ) : (
@@ -37,5 +38,6 @@ export default function ContactPage() {
         ))}
       </ul>
     </Container>
+    </>
   );
 }

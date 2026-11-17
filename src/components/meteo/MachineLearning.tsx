@@ -23,7 +23,7 @@ export function DiurnalProblem() {
   const slotLabel = (i: number) => `${String(Math.floor(i / 2)).padStart(2, "0")}:${i % 2 ? "30" : "00"}`;
 
   return (
-    <div className="border border-ink-600 p-4 sm:p-5">
+    <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-fog-50">Input → target</h3>
@@ -89,7 +89,7 @@ export function ModelComparison() {
   const best = metric === "rmse" ? Math.min(...vals) : Math.max(...vals);
 
   return (
-    <div className="border border-ink-600 p-4 sm:p-5">
+    <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-fog-50">Model comparison</h3>

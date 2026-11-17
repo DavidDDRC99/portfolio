@@ -52,7 +52,7 @@ export function ArchitectureDiagram() {
   const connected = new Set(EDGES.filter((e) => e.includes(active)).flat());
 
   return (
-    <div className="border border-ink-600">
+    <div className="overflow-hidden rounded-2xl border border-ink-600 bg-ink-850">
       <p className="border-b border-ink-600 px-4 py-2 font-mono text-[10.5px] text-fog-500 md:hidden">Scroll sideways to see the full diagram →</p>
       <div className="overflow-x-auto">
         <svg viewBox="0 0 890 490" className="block h-auto w-full min-w-[720px]" role="img" aria-label="Architecture: personal devices connect through Tailscale to a Debian server with internal SSD and external 4 TB HDD, which runs Jellyfin, Navidrome and file storage.">
@@ -67,7 +67,7 @@ export function ArchitectureDiagram() {
           <rect width="890" height="490" fill="url(#arch-grid)" opacity="0.6" />
 
           {/* Zones */}
-          <rect x="210" y="40" width="440" height="440" fill="none" stroke="var(--color-signal-dim)" strokeDasharray="4 5" />
+          <rect x="210" y="40" width="440" height="440" rx="18" fill="none" stroke="var(--color-signal-dim)" strokeDasharray="4 5" />
           <text x="222" y="58" fontSize="10" fill="var(--color-signal)" fontFamily="var(--font-mono)" letterSpacing="1.5">PRIVATE TAILNET · ENCRYPTED</text>
           <text x="700" y="44" fontSize="10" fill="var(--color-fog-500)" fontFamily="var(--font-mono)" letterSpacing="1.5">SERVICES</text>
 
@@ -103,16 +103,16 @@ export function ArchitectureDiagram() {
                 onClick={() => setActive(id)}
                 style={{ cursor: "pointer", outline: "none", opacity: on || near ? 1 : 0.55, transition: "opacity .3s" }}
               >
-                <rect x={n.x} y={n.y} width={n.w} height={n.h} fill="var(--color-ink-850)" stroke={on ? "var(--color-fog-50)" : "var(--color-ink-500)"} strokeWidth={on ? 1.5 : 1} />
-                <rect x={n.x} y={n.y} width={3} height={n.h} fill={accent} />
-                <text x={n.x + 14} y={n.y + 26} fontSize="13.5" fill="var(--color-fog-50)" fontFamily="var(--font-sans)">{n.title}</text>
-                <text x={n.x + 14} y={n.y + 44} fontSize="10" fill="var(--color-fog-400)" fontFamily="var(--font-mono)">{n.sub}</text>
+                <rect x={n.x} y={n.y} width={n.w} height={n.h} rx={12} fill="var(--color-ink-850)" stroke={on ? "var(--color-fog-50)" : "var(--color-ink-500)"} strokeWidth={on ? 1.5 : 1} />
+                <rect x={n.x + 10} y={n.y + 12} width={3} height={n.h - 24} rx={1.5} fill={accent} />
+                <text x={n.x + 22} y={n.y + 28} fontSize="13.5" fill="var(--color-fog-50)" fontFamily="var(--font-sans)">{n.title}</text>
+                <text x={n.x + 22} y={n.y + 46} fontSize="10" fill="var(--color-fog-400)" fontFamily="var(--font-mono)">{n.sub}</text>
                 {id === "server" && (
                   <g fontFamily="var(--font-mono)" fontSize="10" fill="var(--color-fog-300)">
-                    <text x={n.x + 14} y={n.y + 76}>CPU  Ryzen 7 3700U · 4C/8T</text>
-                    <text x={n.x + 14} y={n.y + 94}>GPU  Radeon Vega 10</text>
-                    <text x={n.x + 14} y={n.y + 112}>RAM  8 GB</text>
-                    <text x={n.x + 14} y={n.y + 130}>OS   Debian 13</text>
+                    <text x={n.x + 22} y={n.y + 76}>CPU  Ryzen 7 3700U · 4C/8T</text>
+                    <text x={n.x + 22} y={n.y + 94}>GPU  Radeon Vega 10</text>
+                    <text x={n.x + 22} y={n.y + 112}>RAM  8 GB</text>
+                    <text x={n.x + 22} y={n.y + 130}>OS   Debian 13</text>
                   </g>
                 )}
               </g>

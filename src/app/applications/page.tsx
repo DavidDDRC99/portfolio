@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/i18n";
-import { Container, Tag, Placeholder } from "@/components/ui/Container";
+import { Container, Tag, Placeholder, PageTitle } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "Applications",
@@ -13,13 +13,9 @@ export default function ApplicationsPage() {
   const { applications } = getContent();
   return (
     <>
-      <Container as="header" className="pb-14 pt-20 sm:pt-28">
-        <p className="label mb-4" data-reveal>Applications</p>
-        <h1 className="max-w-3xl text-4xl font-light tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>Things I&apos;ve built</h1>
-        <p className="mt-5 max-w-2xl text-lg text-fog-300" data-reveal>
-          Analysis is half of it. These are tools and systems I designed for my own use and keep running.
-        </p>
-      </Container>
+      <PageTitle eyebrow="Applications" title="Things" muted="I've built">
+        <p>Analysis is half of it. These are tools and systems I designed for my own use and keep running.</p>
+      </PageTitle>
       <Container as="section">
         <ul className="border-t border-ink-600">
           {applications.map((a, i) => (

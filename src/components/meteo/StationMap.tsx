@@ -58,7 +58,7 @@ export function StationMap() {
   const vars = Object.keys(d.variables) as VariableId[];
 
   return (
-    <div className="grid grid-cols-1 border border-ink-600 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-ink-600 bg-ink-850 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="relative h-[340px] border-b border-ink-600 sm:h-[440px] lg:h-auto lg:min-h-[460px] lg:border-b-0 lg:border-r">
         <div ref={mapEl} className="absolute inset-0" role="region" aria-label="Map of the three weather stations in the Vallès Occidental" />
       </div>

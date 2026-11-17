@@ -43,7 +43,7 @@ export function TrendExplorer() {
   const station = stations.find((s) => s.id === sel.sid)!;
 
   return (
-    <div className="grid grid-cols-1 border border-ink-600 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+    <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-ink-600 bg-ink-850 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       {/* Matrix */}
       <div className="border-b border-ink-600 p-4 sm:p-5 xl:border-b-0 xl:border-r">
         <p className="label mb-4">Sen&apos;s slope per decade · select a cell</p>
@@ -203,14 +203,14 @@ function TrendDetail({ annual, trend, color, title, subtitle, unit, decimals }: 
         <span>┄ Sen&apos;s slope · shaded: 95 % CI</span>
       </div>
 
-      <dl className="mt-5 grid grid-cols-2 border-l border-t border-ink-600 sm:grid-cols-4">
+      <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
           { k: "Sen's slope", v: `${fmtSigned(trend.sen_slope_per_decade, decimals)}`, u: `${unit} / decade` },
           { k: "95 % CI", v: `${fmtSigned(trend.sen_ci_per_decade[0], decimals)} … ${fmtSigned(trend.sen_ci_per_decade[1], decimals)}`, u: `${unit} / decade` },
           { k: "Kendall τ", v: trend.tau.toFixed(3), u: fmtP(trend.p_value) },
           { k: "Change over record", v: fmtSigned(total, decimals), u: `${unit} · n = ${trend.n_years} yrs` },
         ].map((s) => (
-          <div key={s.k} className="border-b border-r border-ink-600 p-3">
+          <div key={s.k} className="rounded-xl bg-ink-900 p-3">
             <dt className="label">{s.k}</dt>
             <dd className="mt-1.5 font-mono text-[15px] text-fog-50">{s.v}<span className="block text-[10.5px] text-fog-500">{s.u}</span></dd>
           </div>

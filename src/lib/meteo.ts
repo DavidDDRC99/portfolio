@@ -64,9 +64,9 @@ export type StationMeta = {
 // Sabadell Centre is not part of the XEMA network in the repo; its marker is placed at the
 // town centre and labelled as approximate until the exact position is confirmed.
 export const stations: StationMeta[] = [
-  { id: "sbd-nord", name: "Sabadell Nord · Parc Agrari", short: "Sbd Nord", code: "XF", lat: 41.56568, lon: 2.06955, altitude: 259, exactLocation: true, resolution: "30 min", color: "#5cc8e0" },
-  { id: "sbd-centre", name: "Sabadell Centre", short: "Sbd Centre", code: null, lat: 41.5463, lon: 2.1086, altitude: null, exactLocation: false, resolution: "Daily", color: "#f0a35e", note: "Approximate position (town centre)" },
-  { id: "vacarisses", name: "Vacarisses", short: "Vacarisses", code: "D2", lat: 41.59251, lon: 1.91499, altitude: 343, exactLocation: true, resolution: "30 min", color: "#b79cff" },
+  { id: "sbd-nord", name: "Sabadell Nord · Parc Agrari", short: "Sbd Nord", code: "XF", lat: 41.56568, lon: 2.06955, altitude: 259, exactLocation: true, resolution: "30 min", color: "#2340ff" },
+  { id: "sbd-centre", name: "Sabadell Centre", short: "Sbd Centre", code: null, lat: 41.5463, lon: 2.1086, altitude: null, exactLocation: false, resolution: "Daily", color: "#ff5a36", note: "Approximate position (town centre)" },
+  { id: "vacarisses", name: "Vacarisses", short: "Vacarisses", code: "D2", lat: 41.59251, lon: 1.91499, altitude: 343, exactLocation: true, resolution: "30 min", color: "#0f9f7a" },
 ];
 
 export const stationById = Object.fromEntries(stations.map((s) => [s.id, s])) as Record<StationId, StationMeta>;

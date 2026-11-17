@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getContent } from "@/lib/i18n";
-import { Container, Tag } from "@/components/ui/Container";
+import { Container, Tag, PageTitle } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "Projects",
@@ -14,11 +14,9 @@ export default function ProjectsPage() {
   const [featured, ...rest] = [...projects].sort((a, b) => Number(!!b.featured) - Number(!!a.featured));
   return (
     <>
-      <Container as="header" className="pb-14 pt-20 sm:pt-28">
-        <p className="label mb-4" data-reveal>Projects</p>
-        <h1 className="max-w-3xl text-4xl font-light tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>Scientific work, built on real data</h1>
-        <p className="mt-5 max-w-2xl text-lg text-fog-300" data-reveal>Each project has its own page with the methods, the results and what they don&apos;t show.</p>
-      </Container>
+      <PageTitle eyebrow="Projects" title="Projects" muted="& research">
+        <p>Scientific work built on real data. Each project has its own page with the methods, the results and what they don&apos;t show.</p>
+      </PageTitle>
 
       <Container as="section">
         <Link href={`/projects/${featured.slug}/`} className="group relative block overflow-hidden border border-ink-600 p-6 transition-colors hover:border-signal-dim sm:p-10" data-reveal>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getContent } from "@/lib/i18n";
-import { Container, SectionHeader, Tag } from "@/components/ui/Container";
+import { Container, SectionHeader, Tag, PageTitle } from "@/components/ui/Container";
 
 export const metadata: Metadata = {
   title: "About",
@@ -12,10 +12,10 @@ export default function AboutPage() {
   const c = getContent();
   return (
     <>
-      <Container as="header" className="pb-16 pt-20 sm:pt-28">
-        <p className="label mb-6" data-reveal>About</p>
-        <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
-          <div className="prose-body max-w-2xl text-lg leading-relaxed text-fog-200 sm:text-xl" data-reveal>
+      <PageTitle eyebrow="About" title="About" muted="me" />
+      <Container as="section" className="pb-16">
+        <div className="grid gap-12 border-t border-ink-600 pt-12 lg:grid-cols-[1fr_320px]">
+          <div className="prose-body max-w-2xl text-xl leading-relaxed tracking-[-0.01em] text-fog-200 sm:text-2xl" data-reveal>
             {c.profile.intro.map((p) => <p key={p} className="text-fog-100">{p}</p>)}
           </div>
           <aside className="border-l border-ink-600 pl-6 text-sm" data-reveal>
@@ -57,9 +57,9 @@ export default function AboutPage() {
         <SectionHeader index="02" kicker="Direction" title="Where I want to work">
           <p>Applied scientific and technical environments, with real physical systems and real datasets rather than purely theoretical research.</p>
         </SectionHeader>
-        <ol className="grid border-l border-t border-ink-600 sm:grid-cols-2 lg:grid-cols-3">
+        <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {c.directions.map((d, i) => (
-            <li key={d.title} className="border-b border-r border-ink-600 p-6" data-reveal>
+            <li key={d.title} className="rounded-2xl bg-ink-850 p-6" data-reveal>
               <span className="font-mono text-[11px] text-signal">{String(i + 1).padStart(2, "0")}</span>
               <h3 className="mt-3 text-fog-50">{d.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-fog-400">{d.body}</p>
@@ -73,9 +73,9 @@ export default function AboutPage() {
         <SectionHeader index="03" kicker="Toolkit" title="What I actually use">
           <p>Only tools that appear in my projects. Where usage is limited, it says so.</p>
         </SectionHeader>
-        <div className="grid gap-px bg-ink-600 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           {c.skills.map((g) => (
-            <div key={g.id} className="bg-ink-900 p-6 sm:p-8" data-reveal>
+            <div key={g.id} className="rounded-2xl bg-ink-850 p-6 sm:p-8" data-reveal>
               <div className="flex items-baseline justify-between gap-4">
                 <h3 className="text-lg text-fog-50">{g.title}</h3>
                 <span className="font-mono text-[11px] text-fog-500">{String(g.items.length).padStart(2, "0")}</span>

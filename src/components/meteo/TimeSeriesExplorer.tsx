@@ -119,7 +119,7 @@ export function TimeSeriesExplorer() {
   const xTicks = x.ticks(width < 640 ? 4 : 8);
 
   return (
-    <div className="border border-ink-600">
+    <div className="overflow-hidden rounded-2xl border border-ink-600 bg-ink-850">
       {/* Controls */}
       <div className="flex flex-col gap-4 border-b border-ink-600 p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-2">

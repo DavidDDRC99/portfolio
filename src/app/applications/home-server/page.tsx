@@ -27,7 +27,7 @@ export default function HomeServerPage() {
           <Link href="/applications/" className="hover:text-signal">Applications</Link> <span aria-hidden>/</span> <span className="text-fog-300">home-server</span>
         </nav>
         <p className="label mb-4" data-reveal>Infrastructure · Self-hosted</p>
-        <h1 className="max-w-4xl text-4xl font-light leading-[1.08] tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>A laptop that became a small data centre</h1>
+        <h1 className="max-w-4xl text-4xl font-bold leading-[1.0] tracking-[-0.045em] text-fog-50 sm:text-5xl" data-reveal>A laptop that became a small data centre</h1>
         <p className="mt-6 max-w-2xl text-lg leading-relaxed text-fog-300" data-reveal>
           I turned an old laptop into a Debian server that centralises my files, photos and media on one machine I control, reachable from any of my devices through a private network.
         </p>
@@ -57,13 +57,13 @@ export default function HomeServerPage() {
 
       <Container as="section" className="pt-24">
         <SectionHeader index="03" kicker="System" title="Storage, services and access" />
-        <div className="grid gap-px bg-ink-600 md:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-3">
           {[
             ["Storage architecture", "The internal NVMe holds the operating system and service data. The 4 TB external drive holds the bulk of the library: photos, videos, films, series, music and documents. Separating the two keeps the system disk small and the media easy to move or back up."],
             ["Services", "Jellyfin organises and streams films and series. Navidrome streams the music library and speaks the Subsonic API, so it works with mobile clients such as Substreamer. Personal files live alongside them on the same drive."],
             ["Remote access", "Tailscale creates an encrypted WireGuard network between my devices and the server. Services are reachable from outside home without opening router ports or exposing anything publicly."],
           ].map(([k, v]) => (
-            <div key={k} className="bg-ink-900 p-6" data-reveal>
+            <div key={k} className="rounded-2xl bg-ink-850 p-6" data-reveal>
               <h3 className="text-fog-50">{k}</h3>
               <p className="mt-3 text-sm leading-relaxed text-fog-400">{v}</p>
             </div>

@@ -1,41 +1,46 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────
-   Design tokens
-   Dark navy / charcoal base, off-white text, a single cyan accent
-   and a warm counterpart reserved for "warming" data signals.
+   Design tokens — light, bright editorial theme
+   Surfaces ("ink-*") are warm off-whites; text ("fog-*") is near-black.
+   The names are semantic (surface / text), so the whole site re-themes
+   from here. Accent: cobalt (sky). Secondary: coral (warming signal).
    ────────────────────────────────────────────────────────────── */
 @theme {
-  --color-ink-950: #070b11;
-  --color-ink-900: #0b1119;
-  --color-ink-850: #0f1620;
-  --color-ink-800: #141c28;
-  --color-ink-700: #1c2635;
-  --color-ink-600: #2a3647;
-  --color-ink-500: #3d4a5e;
+  /* surfaces: 900 = page, higher = lighter cards, lower = stronger lines */
+  --color-ink-950: #e9e7e1;
+  --color-ink-900: #f4f3ef;
+  --color-ink-850: #ffffff;
+  --color-ink-800: #eceae4;
+  --color-ink-700: #e1dfd8;
+  --color-ink-600: #d2cfc6;
+  --color-ink-500: #b3afa5;
 
-  --color-fog-50: #eef1f5;
-  --color-fog-100: #dde2ea;
-  --color-fog-200: #c4ccd8;
-  --color-fog-300: #aab4c3;
-  --color-fog-400: #8792a4;
-  --color-fog-500: #687388;
+  /* text: 50 = strongest */
+  --color-fog-50: #0d0d10;
+  --color-fog-100: #17171b;
+  --color-fog-200: #2b2b31;
+  --color-fog-300: #45454d;
+  --color-fog-400: #65656e;
+  --color-fog-500: #8a8a92;
 
-  --color-signal: #5cc8e0;      /* primary accent: cyan */
-  --color-signal-dim: #2c6f80;
-  --color-cool: #7aa2ff;        /* secondary series */
-  --color-warm: #f0a35e;        /* warming / positive temperature trend */
-  --color-rain: #6fd3b1;        /* precipitation */
-  --color-alert: #ef7a7a;
+  --color-signal: #2340ff;      /* cobalt — primary accent */
+  --color-signal-dim: #a9b4ff;
+  --color-cobalt-deep: #1529c9;
+  --color-cool: #2340ff;        /* "decrease" in trend matrix */
+  --color-warm: #ff5a36;        /* coral — warming / increase */
+  --color-rain: #0f9f7a;        /* precipitation / status */
+  --color-alert: #e5484d;
 
-  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter-tight), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   --bg: var(--color-ink-900);
   --text: var(--color-fog-100);
 }
@@ -51,36 +56,69 @@ html {
 body {
   background: var(--bg);
   font-family: var(--font-sans);
-  font-feature-settings: "ss02", "zero";
   min-height: 100dvh;
 }
 
 ::selection {
-  background: color-mix(in oklab, var(--color-signal) 35%, transparent);
-  color: var(--color-fog-50);
+  background: var(--color-signal);
+  color: #fff;
 }
 
 :focus-visible {
   outline: 2px solid var(--color-signal);
   outline-offset: 3px;
-  border-radius: 2px;
+  border-radius: 4px;
+}
+
+/* Giant display type, as in the reference: heavy, tight, uppercase. */
+.display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+/* Crosshair registration marks ("+") placed on a coarse grid. */
+.crosshairs {
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(currentColor, currentColor);
+  background-size: 9px 1px, 1px 9px;
+  background-repeat: no-repeat;
 }
 
 /* Fine measurement grid used as a quiet background texture. */
 .grid-bg {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--color-ink-600) 35%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink-600) 35%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--color-ink-600) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink-600) 55%, transparent) 1px, transparent 1px);
   background-size: 64px 64px;
 }
 
-/* Instrument-style label: mono, small caps feel. */
+/* Small mono label. */
 .label {
   font-family: var(--font-mono);
   font-size: 0.6875rem;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-fog-400);
+}
+
+/* Pill eyebrow: "● 01 · OVERVIEW" */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-ink-600);
+  background: var(--color-ink-850);
+  border-radius: 999px;
+  padding: 0.3rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-fog-300);
 }
 
 .prose-body p + p { margin-top: 1rem; }
@@ -91,23 +129,27 @@ body {
 @media (prefers-reduced-motion: no-preference) {
   .js [data-reveal] {
     opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.8s var(--ease-out-soft), transform 0.8s var(--ease-out-soft);
+    transform: translateY(18px);
+    transition: opacity 0.9s var(--ease-out-soft), transform 0.9s var(--ease-out-soft);
   }
   .js [data-reveal].is-in { opacity: 1; transform: none; }
 
-  .chart-path { transition: d 0.6s var(--ease-out-soft), opacity 0.4s; }
   .chart-dot { transition: cx 0.6s var(--ease-out-soft), cy 0.6s var(--ease-out-soft), opacity 0.4s; }
+
+  .float-a { animation: floaty 7s ease-in-out infinite; }
+  .float-b { animation: floaty 8s ease-in-out -3s infinite; }
 }
+@keyframes floaty { 50% { transform: translateY(-8px); } }
 
 /* Leaflet: tone controls to the site palette. */
-.leaflet-container { background: var(--color-ink-950); font-family: var(--font-sans); }
-.leaflet-control-attribution { background: color-mix(in oklab, var(--color-ink-950) 80%, transparent) !important; color: var(--color-fog-500) !important; font-size: 10px; }
-.leaflet-control-attribution a { color: var(--color-fog-400) !important; }
-.leaflet-bar a { background: var(--color-ink-800) !important; color: var(--color-fog-100) !important; border-color: var(--color-ink-600) !important; }
+.leaflet-container { background: var(--color-ink-800); font-family: var(--font-sans); }
+.leaflet-control-attribution { background: color-mix(in oklab, #fff 85%, transparent) !important; color: var(--color-fog-400) !important; font-size: 10px; }
+.leaflet-control-attribution a { color: var(--color-fog-300) !important; }
+.leaflet-bar { border: 1px solid var(--color-ink-600) !important; border-radius: 10px !important; overflow: hidden; }
+.leaflet-bar a { background: #fff !important; color: var(--color-fog-100) !important; border-color: var(--color-ink-600) !important; }
 .leaflet-tooltip.station-tip {
-  background: var(--color-ink-850); color: var(--color-fog-50); border: 1px solid var(--color-ink-600);
-  border-radius: 2px; box-shadow: none; font-family: var(--font-mono); font-size: 11px; padding: 4px 8px;
+  background: var(--color-fog-50); color: #fff; border: 0;
+  border-radius: 999px; box-shadow: none; font-family: var(--font-mono); font-size: 11px; padding: 3px 10px;
 }
 .leaflet-tooltip.station-tip::before { display: none; }
-.leaflet-tile-pane .osm-dark { filter: invert(1) hue-rotate(185deg) brightness(0.82) contrast(0.92) saturate(0.35); }
+.leaflet-tile-pane .osm-dark { filter: grayscale(1) contrast(0.9) brightness(1.04); }

@@ -30,7 +30,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <Link href="/projects/" className="hover:text-signal">Projects</Link> <span aria-hidden>/</span> <span className="text-fog-300">{p.slug}</span>
         </nav>
         <p className="label mb-4" data-reveal>{p.kicker} · {p.year}</p>
-        <h1 className="max-w-4xl text-3xl font-light leading-tight tracking-[-0.02em] text-fog-50 sm:text-5xl" data-reveal>{p.title}</h1>
+        <h1 className="max-w-4xl text-3xl font-bold leading-[1.02] tracking-[-0.045em] text-fog-50 sm:text-5xl" data-reveal>{p.title}</h1>
         <p className="mt-6 max-w-2xl text-lg text-fog-300" data-reveal>{p.summary}</p>
         <div className="mt-6 flex flex-wrap gap-1.5" data-reveal>{p.tags.map((t) => <Tag key={t}>{t}</Tag>)}</div>
       </Container>
@@ -58,7 +58,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
         <aside className="space-y-8 lg:sticky lg:top-24 lg:self-start">
           {p.outcome?.map((o) => (
-            <div key={o.label} className="border border-ink-600 p-5" data-reveal>
+            <div key={o.label} className="rounded-2xl border border-ink-600 bg-ink-850 p-5" data-reveal>
               <p className="label">{o.label}</p>
               <p className="mt-2 font-mono text-3xl text-fog-50">{o.value}</p>
               {o.note && <p className="mt-2 text-sm text-fog-400">{o.note}</p>}
