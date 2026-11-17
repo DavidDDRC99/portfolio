@@ -1,0 +1,113 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   Design tokens
+   Dark navy / charcoal base, off-white text, a single cyan accent
+   and a warm counterpart reserved for "warming" data signals.
+   ────────────────────────────────────────────────────────────── */
+@theme {
+  --color-ink-950: #070b11;
+  --color-ink-900: #0b1119;
+  --color-ink-850: #0f1620;
+  --color-ink-800: #141c28;
+  --color-ink-700: #1c2635;
+  --color-ink-600: #2a3647;
+  --color-ink-500: #3d4a5e;
+
+  --color-fog-50: #eef1f5;
+  --color-fog-100: #dde2ea;
+  --color-fog-200: #c4ccd8;
+  --color-fog-300: #aab4c3;
+  --color-fog-400: #8792a4;
+  --color-fog-500: #687388;
+
+  --color-signal: #5cc8e0;      /* primary accent: cyan */
+  --color-signal-dim: #2c6f80;
+  --color-cool: #7aa2ff;        /* secondary series */
+  --color-warm: #f0a35e;        /* warming / positive temperature trend */
+  --color-rain: #6fd3b1;        /* precipitation */
+  --color-alert: #ef7a7a;
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, SFMono-Regular, monospace;
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root {
+  color-scheme: dark;
+  --bg: var(--color-ink-900);
+  --text: var(--color-fog-100);
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss02", "zero";
+  min-height: 100dvh;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-signal) 35%, transparent);
+  color: var(--color-fog-50);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Fine measurement grid used as a quiet background texture. */
+.grid-bg {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-ink-600) 35%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink-600) 35%, transparent) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* Instrument-style label: mono, small caps feel. */
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-fog-400);
+}
+
+.prose-body p + p { margin-top: 1rem; }
+.prose-body a { color: var(--color-signal); text-underline-offset: 3px; }
+.prose-body a:hover { text-decoration: underline; }
+
+/* Reveal-on-scroll (progressive: content is visible without JS). */
+@media (prefers-reduced-motion: no-preference) {
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.8s var(--ease-out-soft), transform 0.8s var(--ease-out-soft);
+  }
+  .js [data-reveal].is-in { opacity: 1; transform: none; }
+
+  .chart-path { transition: d 0.6s var(--ease-out-soft), opacity 0.4s; }
+  .chart-dot { transition: cx 0.6s var(--ease-out-soft), cy 0.6s var(--ease-out-soft), opacity 0.4s; }
+}
+
+/* Leaflet: tone controls to the site palette. */
+.leaflet-container { background: var(--color-ink-950); font-family: var(--font-sans); }
+.leaflet-control-attribution { background: color-mix(in oklab, var(--color-ink-950) 80%, transparent) !important; color: var(--color-fog-500) !important; font-size: 10px; }
+.leaflet-control-attribution a { color: var(--color-fog-400) !important; }
+.leaflet-bar a { background: var(--color-ink-800) !important; color: var(--color-fog-100) !important; border-color: var(--color-ink-600) !important; }
+.leaflet-tooltip.station-tip {
+  background: var(--color-ink-850); color: var(--color-fog-50); border: 1px solid var(--color-ink-600);
+  border-radius: 2px; box-shadow: none; font-family: var(--font-mono); font-size: 11px; padding: 4px 8px;
+}
+.leaflet-tooltip.station-tip::before { display: none; }
+.leaflet-tile-pane .osm-dark { filter: invert(1) hue-rotate(185deg) brightness(0.82) contrast(0.92) saturate(0.35); }

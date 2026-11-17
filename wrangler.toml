@@ -1,0 +1,4 @@
+# Cloudflare Pages configuration (used by `npm run deploy` and by Git-connected builds).
+name = "david-dominguez-portfolio"
+pages_build_output_dir = "out"
+compatibility_date = "2026-11-01"
