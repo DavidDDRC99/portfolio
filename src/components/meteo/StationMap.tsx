@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { stations, stationsData, variableById, type StationId, type VariableId } from "@/lib/meteo";
+import { stations, stationsData, type StationId, type VariableId } from "@/lib/meteo";
+import type { Dict } from "@/i18n/en";
 
 /** Interactive map of the three stations plus a details panel for the selected one. */
-export function StationMap() {
+export function StationMap({ labels: L }: { labels: Dict["charts"] }) {
+  const M = L.map;
   const mapEl = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<StationId>("sbd-nord");
   const markers = useRef<Record<string, import("leaflet").CircleMarker>>({});
@@ -60,10 +62,10 @@ export function StationMap() {
   return (
     <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-ink-600 bg-ink-850 lg:grid-cols-[minmax(0,1fr)_360px]">
       <div className="relative h-[340px] border-b border-ink-600 sm:h-[440px] lg:h-auto lg:min-h-[460px] lg:border-b-0 lg:border-r">
-        <div ref={mapEl} className="absolute inset-0" role="region" aria-label="Map of the three weather stations in the Vallès Occidental" />
+        <div ref={mapEl} className="absolute inset-0" role="region" aria-label={M.aria} />
       </div>
       <div className="flex flex-col">
-        <div role="tablist" aria-label="Stations" className="grid grid-cols-3 border-b border-ink-600">
+        <div role="tablist" aria-label={M.stations} className="grid grid-cols-3 border-b border-ink-600">
           {stations.map((st) => (
             <button
               key={st.id}
@@ -78,14 +80,14 @@ export function StationMap() {
           ))}
         </div>
         <div className="flex-1 p-5" role="tabpanel">
-          <h3 className="text-lg text-fog-50">{s.name}</h3>
+          <h3 className="text-xl font-semibold tracking-tight text-fog-50">{s.name}</h3>
           <dl className="mt-4 divide-y divide-ink-700 border-y border-ink-700 text-sm">
             {[
-              ["Meteocat code", s.code ?? "—"],
-              ["Record", `${d.period[0]} → ${d.period[1]}`],
-              ["Resolution", s.resolution],
-              ["Altitude", s.altitude ? `${s.altitude} m` : "—"],
-              ["Position", s.exactLocation ? `${s.lat.toFixed(4)}° N, ${s.lon.toFixed(4)}° E` : s.note ?? "Approximate"],
+              [M.code, s.code ?? "—"],
+              [M.record, `${d.period[0]} → ${d.period[1]}`],
+              [M.resolution, s.resolution === "Daily" ? M.daily : s.resolution],
+              [M.altitude, s.altitude ? `${s.altitude} m` : "—"],
+              [M.position, s.exactLocation ? `${s.lat.toFixed(4)}° N, ${s.lon.toFixed(4)}° E` : M.approx],
             ].map(([k, v]) => (
               <div key={k} className="flex justify-between gap-4 py-2">
                 <dt className="text-fog-400">{k}</dt>
@@ -93,11 +95,11 @@ export function StationMap() {
               </div>
             ))}
           </dl>
-          <p className="label mb-2 mt-5">Variables · daily-data coverage</p>
+          <p className="label mb-2 mt-5">{M.coverage}</p>
           <ul className="space-y-1.5">
             {vars.map((v) => (
               <li key={v} className="grid grid-cols-[1fr_90px_44px] items-center gap-3 text-[13px]">
-                <span className="text-fog-300">{variableById[v].label}</span>
+                <span className="text-fog-300">{L.variables[v][0]}</span>
                 <span className="h-1 bg-ink-700"><span className="block h-1" style={{ width: `${d.variables[v]!.coverage}%`, background: s.color }} /></span>
                 <span className="text-right font-mono text-[11px] text-fog-400">{d.variables[v]!.coverage.toFixed(0)}%</span>
               </li>

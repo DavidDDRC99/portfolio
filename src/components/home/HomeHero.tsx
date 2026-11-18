@@ -15,6 +15,8 @@ export function HomeHero({
   role,
   portrait,
   featured,
+  contactHref,
+  labels,
 }: {
   firstName: string;
   lastName: string;
@@ -22,6 +24,8 @@ export function HomeHero({
   role: string;
   portrait: string | null;
   featured: { href: string; title: string; annual: [number, number | null][]; trend: Trend };
+  contactHref: string;
+  labels: { letsTalk: string; talkSub: string; cardTag: string };
 }) {
   const marks = [
     [8, 14], [33, 14], [58, 14], [83, 14],
@@ -82,11 +86,11 @@ export function HomeHero({
               </div>
               <div className="flex items-center justify-between px-1 pb-1 pt-3 text-[12px]">
                 <span className="flex items-center gap-1.5 font-semibold"><span className="text-signal">✳</span> VO-evolution</span>
-                <span className="text-fog-400">/ Climate data</span>
+                <span className="text-fog-400">{labels.cardTag}</span>
               </div>
             </Link>
 
-            <Link href="/contact/" className="float-b group flex items-center gap-3 rounded-2xl bg-fog-50 p-3 text-white shadow-[0_20px_60px_-20px_rgba(5,10,60,0.7)] sm:flex-1 lg:flex-none" data-reveal>
+            <Link href={contactHref} className="float-b group flex items-center gap-3 rounded-2xl bg-fog-50 p-3 text-white shadow-[0_20px_60px_-20px_rgba(5,10,60,0.7)] sm:flex-1 lg:flex-none" data-reveal>
               <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-signal text-lg font-bold">
                 {portrait ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -96,9 +100,9 @@ export function HomeHero({
                 )}
               </span>
               <span className="flex-1">
-                <span className="block text-[11px] text-white/60">Let&apos;s talk</span>
+                <span className="block text-[11px] text-white/60">{labels.letsTalk}</span>
                 <span className="block text-[15px] font-semibold">{firstName} {lastName.split(" ")[0]}</span>
-                <span className="block text-[11px] text-white/60">Physics · Meteorology · Data</span>
+                <span className="block text-[11px] text-white/60">{labels.talkSub}</span>
               </span>
               <span className="grid h-9 w-9 place-items-center rounded-lg bg-white text-fog-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden>↗</span>
             </Link>

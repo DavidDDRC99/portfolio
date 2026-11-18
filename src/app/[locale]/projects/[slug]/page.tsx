@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getContent } from "@/lib/i18n";
+import { getContent, getDict, lp, type Locale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/meta";
 import { Container, Tag } from "@/components/ui/Container";
 
 /** Generic template for "standard" projects. Rich projects have their own route. */
@@ -11,23 +12,26 @@ export function generateStaticParams() {
 
 export const dynamicParams = false;
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const p = getContent().projectDetails[slug];
+type Props = { params: Promise<{ locale: Locale; slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const p = getContent(locale).projectDetails[slug];
   if (!p) return {};
-  return { title: p.title, description: p.summary, alternates: { canonical: `/projects/${slug}/` } };
+  return pageMeta(locale, `/projects/${slug}/`, p.title, p.summary);
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const p = getContent().projectDetails[slug];
+export default async function ProjectPage({ params }: Props) {
+  const { locale, slug } = await params;
+  const p = getContent(locale).projectDetails[slug];
+  const d = getDict(locale);
   if (!p) notFound();
 
   return (
     <article>
       <Container as="header" className="border-b border-ink-700 pb-14 pt-16 sm:pt-24">
         <nav aria-label="Breadcrumb" className="mb-8 font-mono text-[11px] text-fog-500">
-          <Link href="/projects/" className="hover:text-signal">Projects</Link> <span aria-hidden>/</span> <span className="text-fog-300">{p.slug}</span>
+          <Link href={lp(locale, "/projects/")} className="hover:text-signal">{d.nav.projects}</Link> <span aria-hidden>/</span> <span className="text-fog-300">{p.slug}</span>
         </nav>
         <p className="label mb-4" data-reveal>{p.kicker} · {p.year}</p>
         <h1 className="max-w-4xl text-3xl font-bold leading-[1.02] tracking-[-0.045em] text-fog-50 sm:text-5xl" data-reveal>{p.title}</h1>
@@ -65,19 +69,19 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             </div>
           ))}
           <div data-reveal>
-            <p className="label mb-3">Stack</p>
+            <p className="label mb-3">{d.common.stack}</p>
             <ul className="divide-y divide-ink-700 border-y border-ink-700 text-sm text-fog-200">
               {p.stack.map((s) => <li key={s} className="py-2">{s}</li>)}
             </ul>
           </div>
           {p.repo && (
-            <a href={p.repo} target="_blank" rel="noopener noreferrer" className="block text-sm text-signal hover:underline">Repository ↗</a>
+            <a href={p.repo} target="_blank" rel="noopener noreferrer" className="block text-sm text-signal hover:underline">{d.common.repository} ↗</a>
           )}
         </aside>
       </Container>
 
       <Container className="pt-20">
-        <Link href="/projects/" className="font-mono text-[12px] text-fog-400 hover:text-signal">← All projects</Link>
+        <Link href={lp(locale, "/projects/")} className="font-mono text-[12px] text-fog-400 hover:text-signal">{d.common.allProjects}</Link>
       </Container>
     </article>
   );

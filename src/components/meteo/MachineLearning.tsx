@@ -5,11 +5,13 @@ import { scaleLinear } from "d3-scale";
 import { line, curveMonotoneX } from "d3-shape";
 import { diurnalData, mlResults } from "@/lib/meteo";
 import { useMeasure, Segmented } from "@/components/charts/useMeasure";
+import type { Dict } from "@/i18n/en";
 
 type Season = keyof typeof diurnalData;
 
 /** The ML problem made visible: daily aggregates in, a 48-slot curve out. */
-export function DiurnalProblem() {
+export function DiurnalProblem({ labels: L }: { labels: Dict["charts"] }) {
+  const T = L.ml;
   const [season, setSeason] = useState<Season>("summer");
   const [ref, width] = useMeasure<HTMLDivElement>(560);
   const [hover, setHover] = useState<number | null>(null);
@@ -26,10 +28,10 @@ export function DiurnalProblem() {
     <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-fog-50">Input → target</h3>
-          <p className="text-sm text-fog-400">Real 30-min observations at Sabadell Nord · {d.date} (UTC)</p>
+          <h3 className="font-semibold text-fog-50">{T.problemTitle}</h3>
+          <p className="text-sm text-fog-400">{T.problemSub} · {d.date} (UTC)</p>
         </div>
-        <Segmented label="Example day" size="sm" value={season} onChange={(v) => { setSeason(v); setHover(null); }} options={(["winter", "spring", "summer", "autumn"] as Season[]).map((s) => ({ value: s, label: s[0].toUpperCase() + s.slice(1) }))} />
+        <Segmented label={T.exampleDay} size="sm" value={season} onChange={(v) => { setSeason(v); setHover(null); }} options={(["winter", "spring", "summer", "autumn"] as Season[]).map((s) => ({ value: s, label: T.seasons[s] }))} />
       </div>
       <div ref={ref} className="relative mt-4">
         <svg
@@ -37,7 +39,7 @@ export function DiurnalProblem() {
           height={H}
           className="block"
           role="img"
-          aria-label={`Temperature through the day on ${d.date}: minimum ${d.t_min} °C, maximum ${d.t_max} °C`}
+          aria-label={`${T.problemTitle} · ${d.date}: T min ${d.t_min} °C, T max ${d.t_max} °C`}
           onPointerMove={(e) => {
             const r = e.currentTarget.getBoundingClientRect();
             const i = Math.round(x.invert(e.clientX - r.left));
@@ -73,13 +75,14 @@ export function DiurnalProblem() {
         )}
       </div>
       <p className="mt-3 text-sm text-fog-400">
-        Dashed lines are what the model sees (daily aggregates, plus humidity, rain, pressure and calendar features). The cyan curve, 48 values per day, is what it has to reconstruct.
+        {T.problemNote}
       </p>
     </div>
   );
 }
 
-export function ModelComparison() {
+export function ModelComparison({ labels: L }: { labels: Dict["charts"] }) {
+  const T = L.ml;
   const [metric, setMetric] = useState<"rmse" | "r2">("rmse");
   const models = mlResults.models;
   const vals = models.map((mm) => (metric === "rmse" ? mm.rmse : mm.r2));
@@ -92,10 +95,10 @@ export function ModelComparison() {
     <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-fog-50">Model comparison</h3>
-          <p className="text-sm text-fog-400">Held-out test set · {mlResults.split.test}</p>
+          <h3 className="font-semibold text-fog-50">{T.compTitle}</h3>
+          <p className="text-sm text-fog-400">{T.compSub} · {mlResults.split.test}</p>
         </div>
-        <Segmented label="Metric" size="sm" value={metric} onChange={setMetric} options={[{ value: "rmse", label: "RMSE °C" }, { value: "r2", label: "R²" }]} />
+        <Segmented label={T.metric} size="sm" value={metric} onChange={setMetric} options={[{ value: "rmse", label: "RMSE °C" }, { value: "r2", label: "R²" }]} />
       </div>
       <ul className="mt-6 space-y-4">
         {models.map((mm) => {
@@ -105,27 +108,27 @@ export function ModelComparison() {
             <li key={mm.id}>
               <div className="mb-1.5 flex flex-wrap items-baseline justify-between gap-x-4">
                 <span className={isBest ? "text-fog-50" : "text-fog-300"}>
-                  {mm.name}
-                  {mm.id === "sin" && <span className="ml-2 font-mono text-[10px] text-fog-500">baseline</span>}
+                  {T.models[mm.id][0]}
+                  {mm.id === "sin" && <span className="ml-2 font-mono text-[10px] text-fog-500">{T.baseline}</span>}
                 </span>
                 <span className={`font-mono text-[13px] ${isBest ? "text-signal" : "text-fog-200"}`}>{metric === "rmse" ? `${v.toFixed(3)} °C` : v.toFixed(4)}</span>
               </div>
               <div className="h-2 bg-ink-800">
                 <div className="h-2 transition-[width] duration-700 ease-out" style={{ width: `${Math.max(2, pct(v))}%`, background: isBest ? "var(--color-signal)" : mm.id === "sin" ? "var(--color-fog-500)" : "var(--color-ink-500)" }} />
               </div>
-              <p className="mt-1 font-mono text-[10.5px] text-fog-500">{mm.note}</p>
+              <p className="mt-1 font-mono text-[10.5px] text-fog-500">{T.models[mm.id][1]}</p>
             </li>
           );
         })}
         {mlResults.skipped.map((s) => (
           <li key={s.name} className="border-t border-dashed border-ink-600 pt-3">
-            <div className="flex justify-between gap-4"><span className="text-fog-400">{s.name}</span><span className="font-mono text-[12px] text-fog-500">not scored</span></div>
-            <p className="mt-1 font-mono text-[10.5px] text-fog-500">{s.note}</p>
+            <div className="flex justify-between gap-4"><span className="text-fog-400">{s.name}</span><span className="font-mono text-[12px] text-fog-500">{T.notScored}</span></div>
+            <p className="mt-1 font-mono text-[10.5px] text-fog-500">{T.xgb}</p>
           </li>
         ))}
       </ul>
       <p className="mt-5 font-mono text-[10.5px] text-fog-500">
-        Axis truncated to {metric === "rmse" ? "1.0–1.5 °C" : "0.950–0.975"} to make differences visible. {metric === "rmse" ? "Lower is better." : "Higher is better."}
+        {T.truncated} ({metric === "rmse" ? "1.0–1.5 °C" : "0.950–0.975"}) {metric === "rmse" ? T.lower : T.higher}
       </p>
     </div>
   );

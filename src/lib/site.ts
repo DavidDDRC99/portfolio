@@ -8,9 +8,9 @@ export const site = {
 };
 
 export const nav = [
-  { href: "/", label: "Index" },
-  { href: "/about/", label: "About" },
-  { href: "/projects/", label: "Projects" },
-  { href: "/applications/", label: "Applications" },
-  { href: "/contact/", label: "Contact" },
+  { path: "/", key: "home" },
+  { path: "/about/", key: "about" },
+  { path: "/projects/", key: "projects" },
+  { path: "/applications/", key: "applications" },
+  { path: "/contact/", key: "contact" },
 ] as const;

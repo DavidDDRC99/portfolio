@@ -15,31 +15,30 @@ npm run build        # writes the static site to out/
 
 ```
 src/
-  app/                      routes (one folder per page)
-    projects/vo-evolution/  hand-built interactive page for the climate project
-    projects/[slug]/        generic template for other projects (driven by content)
-    applications/…          one page per application
-  components/
-    layout/  ui/            nav, footer, containers, tags, placeholders
-    charts/                 shared chart helpers (useMeasure, Segmented, sparkline)
-    meteo/                  map, time-series explorer, trend matrix, ML panels
-    apps/                   home-server architecture diagram
-    home/                   isobar hero canvas
-  content/
-    types.ts                content model shared by all languages
-    en/index.ts             all English text — edit here to update the site
-  lib/
-    i18n.ts                 locale registry (ca / es can be added later)
-    meteo.ts                station metadata + typed access to the generated data
+  app/
+    layout.tsx              pass-through root layout (imports globals.css)
+    page.tsx                "/" → picks a language (saved choice, then browser) → /en/ /ca/ /es/
+    not-found.tsx           global 404 (out/404.html)
+    [locale]/               every page, once per language
+      layout.tsx            <html lang>, nav with language switcher, footer
+      projects/vo-evolution/  hand-built interactive page for the climate project
+      projects/[slug]/        generic template for other projects (driven by content)
+      applications/…          one page per application
+  components/               layout, ui, charts, meteo, apps, home
+  content/{en,ca,es}/       profile, education, skills, projects, applications (facts)
+  i18n/{en,ca,es}.ts        all interface and page copy; ca/es must match en's shape
+  lib/i18n.ts               locales, getContent / getDict, lp() for localized links
+  lib/meta.ts               per-page metadata with hreflang alternates
 scripts/build_meteo_data.py regenerates public/data/meteo/*.json from the repo CSVs
-public/data/meteo/          generated data (do not edit by hand)
+public/_redirects           old language-less URLs → /en/…
 ```
 
-### Adding content
-- **New standard project:** add a summary to `projects` and a detail entry to `projectDetails` in `src/content/en/index.ts`. The page is generated automatically.
-- **New application:** add it to `applications` and create `src/app/applications/<slug>/page.tsx`.
-- **Contact details:** fill `contact.email` / `contact.linkedin` in `src/content/en/index.ts`.
-- **Catalan / Spanish:** copy `src/content/en` to `src/content/ca`, translate, register it in `src/lib/i18n.ts`, then move routes under `app/[locale]/`.
+### Editing text
+- **Facts about David** (bio, education, skills, projects): `src/content/<lang>/index.ts`.
+- **Page and interface copy**: `src/i18n/<lang>.ts`. TypeScript fails the build if a translation is missing a key.
+- **New standard project**: add it to `projects` + `projectDetails` in all three content files.
+- **New application**: add it to `applications` and create `src/app/[locale]/applications/<slug>/page.tsx`.
+- **Portrait photo**: put it in `public/images/portrait.png` and set `profile.portrait` to `"/images/portrait.png"` in each content file.
 
 ### Regenerating the meteorological data
 Requires Python with pandas, scipy and statsmodels:

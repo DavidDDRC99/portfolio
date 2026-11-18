@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { scaleLinear } from "d3-scale";
 import { line, area, curveMonotoneX } from "d3-shape";
-import { stations, stationsData, variableById, indices, type StationId, type Trend } from "@/lib/meteo";
+import { stations, stationsData, type StationId, type Trend } from "@/lib/meteo";
+import type { Dict } from "@/i18n/en";
+
+type TL = Dict["charts"]["trend"];
 import { fmtSigned, fmtP } from "@/lib/format";
 import { useMeasure } from "@/components/charts/useMeasure";
 
@@ -36,7 +39,9 @@ function cellStyle(t: Trend | null) {
   return { background: `color-mix(in oklab, ${color} ${strength * 100}%, transparent)`, color: t.significant_05 ? "var(--color-fog-50)" : "var(--color-fog-300)", "--dot": color } as React.CSSProperties;
 }
 
-export function TrendExplorer() {
+export function TrendExplorer({ labels: L }: { labels: Dict["charts"] }) {
+  const T = L.trend;
+  const mLabel = (id: MetricId) => T.metrics[id];
   const [sel, setSel] = useState<{ sid: StationId; mid: MetricId }>({ sid: "sbd-nord", mid: "t_avg" });
   const data = get(sel.sid, sel.mid);
   const metric = METRICS.find((m) => m.id === sel.mid)!;
@@ -46,14 +51,14 @@ export function TrendExplorer() {
     <div className="grid grid-cols-1 overflow-hidden rounded-2xl border border-ink-600 bg-ink-850 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       {/* Matrix */}
       <div className="border-b border-ink-600 p-4 sm:p-5 xl:border-b-0 xl:border-r">
-        <p className="label mb-4">Sen&apos;s slope per decade · select a cell</p>
+        <p className="label mb-4">{T.matrixLabel}</p>
         <div className="-mx-1 overflow-x-auto px-1">
           <table className="w-full min-w-[520px] border-collapse font-mono text-[11.5px]">
             <thead>
               <tr>
-                <th className="pb-2 pr-2 text-left font-normal text-fog-500" scope="col"><span className="sr-only">Station</span></th>
+                <th className="pb-2 pr-2 text-left font-normal text-fog-500" scope="col"><span className="sr-only">{T.station}</span></th>
                 {METRICS.map((mm) => (
-                  <th key={mm.id} scope="col" className="pb-2 text-center font-normal leading-tight text-fog-400">{mm.label}</th>
+                  <th key={mm.id} scope="col" className="pb-2 text-center font-normal leading-tight text-fog-400">{mLabel(mm.id)}</th>
                 ))}
               </tr>
             </thead>
@@ -75,7 +80,7 @@ export function TrendExplorer() {
                           disabled={!t}
                           onClick={() => setSel({ sid: s.id, mid: mm.id })}
                           aria-pressed={selected}
-                          aria-label={t ? `${s.short}, ${mm.label}: ${fmtSigned(t.sen_slope_per_decade, mm.decimals)} ${mm.unit} per decade, ${fmtP(t.p_value)}` : `${s.short}, ${mm.label}: not measured`}
+                          aria-label={t ? `${s.short}, ${mLabel(mm.id)}: ${fmtSigned(t.sen_slope_per_decade, mm.decimals)} ${mm.unit === "days" ? T.days : mm.unit} ${T.perDecade}, ${fmtP(t.p_value)}` : `${s.short}, ${mLabel(mm.id)}: ${T.notMeasured}`}
                           className={`relative flex h-11 w-full items-center justify-center border transition-colors disabled:cursor-default ${selected ? "border-fog-50" : "border-ink-700 hover:border-fog-400"}`}
                           style={cellStyle(t)}
                         >
@@ -91,9 +96,9 @@ export function TrendExplorer() {
           </table>
         </div>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-mono text-[10.5px] text-fog-400">
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 bg-warm/40" /> increase</span>
-          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 bg-cool/40" /> decrease</span>
-          <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-fog-100" /> p &lt; 0.05 (Mann-Kendall)</span>
+          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-warm/40" /> {T.increase}</span>
+          <span className="flex items-center gap-1.5"><span className="h-2.5 w-2.5 rounded-sm bg-cool/40" /> {T.decrease}</span>
+          <span className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-fog-100" /> {T.sig}</span>
         </div>
       </div>
 
@@ -105,20 +110,22 @@ export function TrendExplorer() {
             annual={data.annual}
             trend={data.trend}
             color={station.color}
-            title={`${station.short} · ${metric.kind === "var" ? variableById[sel.mid as "t_avg"].label : indices.find((i) => i.id === sel.mid)!.label}`}
-            subtitle={metric.kind === "index" ? indices.find((i) => i.id === sel.mid)!.definition : metric.id === "rain" ? "Annual accumulated precipitation" : "Annual mean of daily values"}
+            title={`${station.short} · ${metric.kind === "var" ? L.variables[sel.mid][0] : T.indices[sel.mid][0]}`}
+            subtitle={metric.kind === "index" ? T.indices[sel.mid][1] : metric.id === "rain" ? T.rainSub : T.meanSub}
+            labels={T}
             unit={metric.unit}
             decimals={metric.decimals}
           />
         ) : (
-          <p className="text-fog-400">No trend available for this combination.</p>
+          <p className="text-fog-400">{T.noTrend}</p>
         )}
       </div>
     </div>
   );
 }
 
-function TrendDetail({ annual, trend, color, title, subtitle, unit, decimals }: { annual: [number, number | null][]; trend: Trend; color: string; title: string; subtitle: string; unit: string; decimals: number }) {
+function TrendDetail({ annual, trend, color, title, subtitle, unit, decimals, labels: T }: { annual: [number, number | null][]; trend: Trend; color: string; title: string; subtitle: string; unit: string; decimals: number; labels: TL }) {
+  const u = unit === "days" ? T.days : unit;
   const [ref, width] = useMeasure<HTMLDivElement>(520);
   const [hover, setHover] = useState<[number, number] | null>(null);
   const H = 240;
@@ -150,11 +157,11 @@ function TrendDetail({ annual, trend, color, title, subtitle, unit, decimals }: 
     <div>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div>
-          <h3 className="text-fog-50">{title}</h3>
+          <h3 className="font-semibold text-fog-50">{title}</h3>
           <p className="text-sm text-fog-400">{subtitle} · {trend.first_year}–{trend.last_year}</p>
         </div>
         <span className={`font-mono text-[11px] ${trend.significant_05 ? "text-signal" : "text-fog-400"}`}>
-          {trend.significant_05 ? "Significant at 5 %" : "Not significant at 5 %"}
+          {trend.significant_05 ? T.significant : T.notSignificant}
         </span>
       </div>
 
@@ -186,29 +193,29 @@ function TrendDetail({ annual, trend, color, title, subtitle, unit, decimals }: 
               tabIndex={0}
               onFocus={() => setHover([yr, v])}
               onBlur={() => setHover(null)}
-              aria-label={`${yr}: ${v.toFixed(decimals)} ${unit}`}
+              aria-label={`${yr}: ${v.toFixed(decimals)} ${u}`}
               style={{ transition: "r .15s" }}
             />
           ))}
         </svg>
         {hover && (
           <div className="pointer-events-none absolute top-0 border border-ink-600 bg-ink-850 px-2 py-1 font-mono text-[11px]" style={{ left: Math.min(x(hover[0]) + 10, width - 120) }}>
-            <span className="text-fog-400">{hover[0]}</span> <span className="text-fog-50">{hover[1].toFixed(decimals)} {unit}</span>
+            <span className="text-fog-400">{hover[0]}</span> <span className="text-fog-50">{hover[1].toFixed(decimals)} {u}</span>
           </div>
         )}
       </div>
       <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 font-mono text-[10.5px] text-fog-400">
-        <span><span style={{ color }}>●</span> annual value</span>
-        <span><span style={{ color }}>━</span> LOESS (frac 0.6)</span>
-        <span>┄ Sen&apos;s slope · shaded: 95 % CI</span>
+        <span><span style={{ color }}>●</span> {T.annualValue}</span>
+        <span><span style={{ color }}>━</span> {T.loess}</span>
+        <span>┄ {T.senLegend}</span>
       </div>
 
       <dl className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {[
-          { k: "Sen's slope", v: `${fmtSigned(trend.sen_slope_per_decade, decimals)}`, u: `${unit} / decade` },
-          { k: "95 % CI", v: `${fmtSigned(trend.sen_ci_per_decade[0], decimals)} … ${fmtSigned(trend.sen_ci_per_decade[1], decimals)}`, u: `${unit} / decade` },
-          { k: "Kendall τ", v: trend.tau.toFixed(3), u: fmtP(trend.p_value) },
-          { k: "Change over record", v: fmtSigned(total, decimals), u: `${unit} · n = ${trend.n_years} yrs` },
+          { k: T.senSlope, v: `${fmtSigned(trend.sen_slope_per_decade, decimals)}`, u: `${u} ${T.perDecade}` },
+          { k: T.ci, v: `${fmtSigned(trend.sen_ci_per_decade[0], decimals)} … ${fmtSigned(trend.sen_ci_per_decade[1], decimals)}`, u: `${u} ${T.perDecade}` },
+          { k: T.tau, v: trend.tau.toFixed(3), u: fmtP(trend.p_value) },
+          { k: T.change, v: fmtSigned(total, decimals), u: `${u} · n = ${trend.n_years} ${T.yrs}` },
         ].map((s) => (
           <div key={s.k} className="rounded-xl bg-ink-900 p-3">
             <dt className="label">{s.k}</dt>

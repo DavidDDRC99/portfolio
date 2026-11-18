@@ -9,7 +9,7 @@
 @theme {
   /* surfaces: 900 = page, higher = lighter cards, lower = stronger lines */
   --color-ink-950: #e9e7e1;
-  --color-ink-900: #f4f3ef;
+  --color-ink-900: #f1f1f4;
   --color-ink-850: #ffffff;
   --color-ink-800: #eceae4;
   --color-ink-700: #e1dfd8;
@@ -57,6 +57,30 @@ body {
   background: var(--bg);
   font-family: var(--font-sans);
   min-height: 100dvh;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Atmospheric wash behind every page: soft cobalt, coral and teal glows over
+   a cool-to-warm vertical gradient, so the page is never flat white.
+   Fixed layer (not background-attachment: fixed) so it also works on iOS. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 45vmax at -5% -10%, rgba(35, 64, 255, 0.28), transparent 62%),
+    radial-gradient(50vmax 40vmax at 105% 25%, rgba(255, 90, 54, 0.22), transparent 62%),
+    radial-gradient(55vmax 45vmax at 20% 110%, rgba(15, 159, 122, 0.18), transparent 62%),
+    radial-gradient(45vmax 35vmax at 90% 100%, rgba(139, 92, 246, 0.18), transparent 62%),
+    linear-gradient(180deg, #e2e7fd 0%, #eeebf3 40%, #f7e7de 100%);
+}
+
+/* Tinted band for alternating sections. */
+.band {
+  background: linear-gradient(135deg, #2340ff 0%, #6a4cff 45%, #ff7a52 100%);
 }
 
 ::selection {

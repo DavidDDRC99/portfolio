@@ -5,7 +5,8 @@ import { scaleLinear, scaleUtc } from "d3-scale";
 import { line, area, curveMonotoneX } from "d3-shape";
 import { bisector, extent } from "d3-array";
 import { stations, stationsData, variables, variableById, type StationId, type VariableId } from "@/lib/meteo";
-import { MONTHS, fmtNum } from "@/lib/format";
+import { fmtNum } from "@/lib/format";
+import type { Dict } from "@/i18n/en";
 import { useMeasure, Segmented } from "@/components/charts/useMeasure";
 
 type Resolution = "monthly" | "annual";
@@ -41,14 +42,15 @@ function segments(points: Point[]) {
 
 const bisectT = bisector<Point, number>((d) => d.t).center;
 
-export function TimeSeriesExplorer() {
+export function TimeSeriesExplorer({ labels: L }: { labels: Dict["charts"] }) {
   const [variable, setVariable] = useState<VariableId>("t_avg");
   const [resolution, setResolution] = useState<Resolution>("monthly");
   const [active, setActive] = useState<StationId[]>(["sbd-nord", "vacarisses"]);
   const [hoverT, setHoverT] = useState<number | null>(null);
   const [wrapRef, width] = useMeasure<HTMLDivElement>();
 
-  const meta = variableById[variable];
+  const baseMeta = variableById[variable];
+  const meta = { ...baseMeta, label: L.variables[variable][0], short: L.variables[variable][1] };
   const available = stations.filter((s) => stationsData[s.id].variables[variable]);
   const shown = active.filter((id) => stationsData[id].variables[variable]);
 
@@ -102,7 +104,7 @@ export function TimeSeriesExplorer() {
   const hoverLabel =
     hoverT !== null
       ? resolution === "monthly"
-        ? `${MONTHS[new Date(hoverT).getUTCMonth()]} ${new Date(hoverT).getUTCFullYear()}`
+        ? `${L.months[new Date(hoverT).getUTCMonth()]} ${new Date(hoverT).getUTCFullYear()}`
         : `${new Date(hoverT).getUTCFullYear()}`
       : "";
 
@@ -123,33 +125,33 @@ export function TimeSeriesExplorer() {
       {/* Controls */}
       <div className="flex flex-col gap-4 border-b border-ink-600 p-4 sm:p-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-2">
-          <span className="label">Variable</span>
+          <span className="label">{L.variable}</span>
           <Segmented
-            label="Variable"
+            label={L.variable}
             size="sm"
             value={variable}
             onChange={(v) => { setVariable(v); setHoverT(null); }}
-            options={variables.map((v) => ({ value: v.id, label: v.short }))}
+            options={variables.map((v) => ({ value: v.id, label: L.variables[v.id][1] }))}
           />
         </div>
         <div className="flex flex-wrap gap-6">
           <div className="flex flex-col gap-2">
-            <span className="label">Resolution</span>
-            <Segmented label="Resolution" size="sm" value={resolution} onChange={(r) => { setResolution(r); setHoverT(null); }} options={[{ value: "monthly", label: "Monthly" }, { value: "annual", label: "Annual" }]} />
+            <span className="label">{L.resolution}</span>
+            <Segmented label={L.resolution} size="sm" value={resolution} onChange={(r) => { setResolution(r); setHoverT(null); }} options={[{ value: "monthly", label: L.monthly }, { value: "annual", label: L.annual }]} />
           </div>
           <div className="flex flex-col gap-2">
-            <span className="label">Period</span>
+            <span className="label">{L.period}</span>
             <div className="flex items-center gap-2 font-mono text-[12px]">
-              <label className="sr-only" htmlFor="ts-from">From year</label>
+              <label className="sr-only" htmlFor="ts-from">{L.fromYear}</label>
               <select id="ts-from" value={fromYear} onChange={(e) => { const a = Date.UTC(+e.target.value, 0, 1); setRange([a, Math.max(domain[1], a + MS_YEAR)]); }} className="border border-ink-600 bg-ink-900 px-2 py-1.5 text-fog-100">
                 {years.filter((yr) => yr < toYear).map((yr) => <option key={yr}>{yr}</option>)}
               </select>
               <span className="text-fog-500">→</span>
-              <label className="sr-only" htmlFor="ts-to">To year</label>
+              <label className="sr-only" htmlFor="ts-to">{L.toYear}</label>
               <select id="ts-to" value={toYear} onChange={(e) => { const b = Date.UTC(+e.target.value, 11, 31); setRange([Math.min(domain[0], b - MS_YEAR), b]); }} className="border border-ink-600 bg-ink-900 px-2 py-1.5 text-fog-100">
                 {years.filter((yr) => yr > fromYear).map((yr) => <option key={yr}>{yr}</option>)}
               </select>
-              <button type="button" onClick={() => setRange(null)} className="px-2 py-1.5 text-fog-400 hover:text-signal" disabled={!range}>Reset</button>
+              <button type="button" onClick={() => setRange(null)} className="px-2 py-1.5 text-fog-400 hover:text-signal" disabled={!range}>{L.reset}</button>
             </div>
           </div>
         </div>
@@ -167,7 +169,7 @@ export function TimeSeriesExplorer() {
               aria-pressed={on}
               disabled={!has}
               onClick={() => toggle(s.id)}
-              title={has ? undefined : `${s.short} does not measure ${meta.label.toLowerCase()}`}
+              title={has ? undefined : `${s.short}: ${L.notMeasured} — ${meta.label.toLowerCase()}`}
               className="flex items-center gap-2 text-[13px] text-fog-300 transition-opacity hover:text-fog-50 disabled:cursor-not-allowed disabled:opacity-30"
             >
               <span className="inline-block h-[3px] w-5 transition-opacity" style={{ background: s.color, opacity: on ? 1 : 0.2 }} aria-hidden />
@@ -180,7 +182,7 @@ export function TimeSeriesExplorer() {
 
       {/* Main chart */}
       <div ref={wrapRef} className="relative px-1 pt-3 sm:px-3">
-        <svg width={width} height={H} role="img" aria-label={`${meta.label}, ${resolution} values, ${fromYear} to ${toYear}, for ${series.map((s) => s.meta.short).join(", ")}`} className="block">
+        <svg width={width} height={H} role="img" aria-label={`${meta.label}, ${resolution === "monthly" ? L.monthly : L.annual}, ${fromYear}–${toYear}: ${series.map((s) => s.meta.short).join(", ")}`} className="block">
           <defs>
             <clipPath id="ts-clip"><rect x={m.l} y={0} width={width - m.l - m.r} height={H} /></clipPath>
           </defs>
@@ -190,7 +192,7 @@ export function TimeSeriesExplorer() {
               <text x={m.l - 8} y={y(t) + 3} textAnchor="end" fontSize={10} fill="var(--color-fog-500)" fontFamily="var(--font-mono)">{t}</text>
             </g>
           ))}
-          <text x={m.l} y={10} fontSize={10} fill="var(--color-fog-400)" fontFamily="var(--font-mono)">{meta.unit}{resolution === "monthly" && meta.agg === "sum" ? " / month" : resolution === "annual" && meta.agg === "sum" ? " / year" : ""}</text>
+          <text x={m.l} y={10} fontSize={10} fill="var(--color-fog-400)" fontFamily="var(--font-mono)">{meta.unit}{resolution === "monthly" && meta.agg === "sum" ? L.perMonth : resolution === "annual" && meta.agg === "sum" ? L.perYear : ""}</text>
           {xTicks.map((t) => (
             <text key={+t} x={x(t)} y={H - 8} textAnchor="middle" fontSize={10} fill="var(--color-fog-500)" fontFamily="var(--font-mono)">{t.getUTCFullYear()}</text>
           ))}
@@ -239,7 +241,7 @@ export function TimeSeriesExplorer() {
             {hoverRows.map(({ s, v }) => (
               <p key={s.id} className="flex items-center justify-between gap-4">
                 <span className="flex items-center gap-1.5"><span className="h-2 w-2" style={{ background: s.meta.color }} />{s.meta.short}</span>
-                <span className="text-fog-50">{v === null ? "no data" : `${fmtNum(v, meta.decimals)} ${meta.unit}`}</span>
+                <span className="text-fog-50">{v === null ? L.noData : `${fmtNum(v, meta.decimals)} ${meta.unit}`}</span>
               </p>
             ))}
           </div>
@@ -247,11 +249,11 @@ export function TimeSeriesExplorer() {
       </div>
 
       {/* Overview + brush */}
-      <Brush width={width} fullDomain={fullDomain} domain={domain} onChange={setRange} series={series.map((s) => ({ color: s.meta.color, points: parse("annual", s.id, variable) }))} />
+      <Brush ariaLabel={L.overviewAria} width={width} fullDomain={fullDomain} domain={domain} onChange={setRange} series={series.map((s) => ({ color: s.meta.color, points: parse("annual", s.id, variable) }))} />
 
       <p className="border-t border-ink-600 px-4 py-3 font-mono text-[10.5px] leading-relaxed text-fog-500 sm:px-5">
-        Monthly values require ≥ 80 % of days, annual values ≥ 90 % of the calendar year; gaps in the record are shown as gaps.
-        {meta.agg === "sum" ? " Precipitation is accumulated." : " Temperatures are means of daily values."} Drag on the overview to zoom.
+        {L.gapsNote}
+        {meta.agg === "sum" ? L.sumNote : L.meanNote}{L.dragNote}
       </p>
     </div>
   );
@@ -260,12 +262,14 @@ export function TimeSeriesExplorer() {
 /* ───────────────────────── Brush ───────────────────────── */
 
 function Brush({
+  ariaLabel,
   width,
   fullDomain,
   domain,
   onChange,
   series,
 }: {
+  ariaLabel: string;
   width: number;
   fullDomain: [number, number];
   domain: [number, number];
@@ -321,7 +325,7 @@ function Brush({
         onPointerUp={onUp}
         onPointerCancel={onUp}
         style={{ touchAction: "none" }}
-        aria-label="Overview of the full record. Drag to select a period."
+        aria-label={ariaLabel}
         role="img"
       >
         {series.map((s, i) => (

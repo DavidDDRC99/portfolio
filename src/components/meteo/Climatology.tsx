@@ -4,11 +4,13 @@ import { useState } from "react";
 import { scaleBand, scaleLinear } from "d3-scale";
 import { line, curveMonotoneX } from "d3-shape";
 import { stations, stationsData, type VariableId } from "@/lib/meteo";
-import { MONTHS } from "@/lib/format";
+import type { Dict } from "@/i18n/en";
 import { useMeasure, Segmented } from "@/components/charts/useMeasure";
 
 /** Mean seasonal cycle: monthly temperature lines or monthly precipitation bars. */
-export function Climatology() {
+export function Climatology({ labels: L }: { labels: Dict["charts"] }) {
+  const MONTHS = L.months;
+  const C = L.climatology;
   const [mode, setMode] = useState<"temp" | "rain">("temp");
   const [ref, width] = useMeasure<HTMLDivElement>(560);
   const [hover, setHover] = useState<number | null>(null);
@@ -29,13 +31,13 @@ export function Climatology() {
     <div className="rounded-2xl border border-ink-600 bg-ink-850 p-4 sm:p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-fog-50">Mean seasonal cycle</h3>
-          <p className="text-sm text-fog-400">{mode === "temp" ? "Monthly mean temperature (°C)" : "Mean monthly precipitation (mm)"} · full record</p>
+          <h3 className="font-semibold text-fog-50">{C.title}</h3>
+          <p className="text-sm text-fog-400">{mode === "temp" ? C.tempSub : C.rainSub} · {C.fullRecord}</p>
         </div>
-        <Segmented label="Climatology variable" size="sm" value={mode} onChange={setMode} options={[{ value: "temp", label: "Temperature" }, { value: "rain", label: "Precipitation" }]} />
+        <Segmented label={C.title} size="sm" value={mode} onChange={setMode} options={[{ value: "temp", label: C.temp }, { value: "rain", label: C.rain }]} />
       </div>
       <div ref={ref} className="relative mt-4">
-        <svg width={width} height={H} role="img" aria-label={`Mean seasonal cycle of ${mode === "temp" ? "temperature" : "precipitation"} at the three stations`} className="block" onPointerLeave={() => setHover(null)}>
+        <svg width={width} height={H} role="img" aria-label={`${C.title}: ${mode === "temp" ? C.temp : C.rain}`} className="block" onPointerLeave={() => setHover(null)}>
           {y.ticks(5).map((t) => (
             <g key={t}>
               <line x1={m.l} x2={width - m.r} y1={y(t)} y2={y(t)} stroke="var(--color-ink-700)" />

@@ -1,18 +1,23 @@
 import type { Metadata } from "next";
-import { getContent } from "@/lib/i18n";
+import { getContent, getDict, type Locale } from "@/lib/i18n";
+import { pageMeta } from "@/lib/meta";
 import { Container, SectionHeader, Tag, PageTitle } from "@/components/ui/Container";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Background, academic trajectory, technical skills and professional direction of David Domínguez Ruiz.",
-  alternates: { canonical: "/about/" },
-};
+type Props = { params: Promise<{ locale: Locale }> };
 
-export default function AboutPage() {
-  const c = getContent();
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = getDict(locale).about;
+  return pageMeta(locale, "/about/", t.eyebrow, t.metaDescription);
+}
+
+export default async function AboutPage({ params }: Props) {
+  const { locale } = await params;
+  const c = getContent(locale);
+  const t = getDict(locale).about;
   return (
     <>
-      <PageTitle eyebrow="About" title="About" muted="me" />
+      <PageTitle eyebrow={t.eyebrow} title={t.title} muted={t.muted} />
       <Container as="section" className="pb-16">
         <div className="grid gap-12 border-t border-ink-600 pt-12 lg:grid-cols-[1fr_320px]">
           <div className="prose-body max-w-2xl text-xl leading-relaxed tracking-[-0.01em] text-fog-200 sm:text-2xl" data-reveal>
@@ -20,11 +25,11 @@ export default function AboutPage() {
           </div>
           <aside className="border-l border-ink-600 pl-6 text-sm" data-reveal>
             <dl className="space-y-5">
-              <div><dt className="label">Based in</dt><dd className="mt-1 text-fog-100">{c.profile.location}</dd></div>
-              <div><dt className="label">Now</dt><dd className="mt-1 text-fog-100">MSc Meteorology, UB</dd></div>
-              <div><dt className="label">Background</dt><dd className="mt-1 text-fog-100">BSc Physics, UAB (2025)</dd></div>
+              <div><dt className="label">{t.basedIn}</dt><dd className="mt-1 text-fog-100">{c.profile.location}</dd></div>
+              <div><dt className="label">{t.now}</dt><dd className="mt-1 text-fog-100">{t.nowValue}</dd></div>
+              <div><dt className="label">{t.background}</dt><dd className="mt-1 text-fog-100">{t.backgroundValue}</dd></div>
               <div>
-                <dt className="label">Interested in</dt>
+                <dt className="label">{t.interestedIn}</dt>
                 <dd className="mt-2 flex flex-wrap gap-1.5">{c.interests.map((i) => <Tag key={i}>{i}</Tag>)}</dd>
               </div>
             </dl>
@@ -34,16 +39,16 @@ export default function AboutPage() {
 
       {/* Trajectory as a vertical timeline */}
       <Container as="section" className="pt-16">
-        <SectionHeader index="01" kicker="Trajectory" title="From engineering to physics to the atmosphere" />
-        <ol className="relative ml-1 border-l border-ink-600 md:ml-[200px]">
+        <SectionHeader index="01" kicker={t.trajectoryKicker} title={t.trajectoryTitle} />
+        <ol className="relative ml-1 border-l border-ink-600 lg:ml-[200px]">
           {c.education.map((e) => (
             <li key={e.degree} className="relative pb-12 pl-8 last:pb-0" data-reveal>
               <span
                 className={`absolute -left-[5px] top-1.5 h-[9px] w-[9px] rounded-full border ${e.status === "in-progress" ? "border-signal bg-signal" : "border-fog-400 bg-ink-900"}`}
                 aria-hidden
               />
-              <p className="font-mono text-[11px] text-fog-500">{e.period}{e.status === "in-progress" && <span className="ml-2 text-signal">● in progress</span>}</p>
-              <h3 className="mt-2 text-xl text-fog-50">{e.degree}</h3>
+              <p className="font-mono text-[11px] text-fog-500">{e.period}{e.status === "in-progress" && <span className="ml-2 text-signal">{t.inProgress}</span>}</p>
+              <h3 className="mt-2 text-xl font-semibold tracking-tight text-fog-50">{e.degree}</h3>
               <p className="text-fog-400">{e.institution}</p>
               <div className="mt-4 flex max-w-2xl flex-wrap gap-1.5">{e.focus.map((f) => <Tag key={f}>{f}</Tag>)}</div>
               {e.note && <p className="mt-4 max-w-xl text-sm text-fog-400">{e.note}</p>}
@@ -54,8 +59,8 @@ export default function AboutPage() {
 
       {/* Direction */}
       <Container as="section" className="pt-24 sm:pt-32">
-        <SectionHeader index="02" kicker="Direction" title="Where I want to work">
-          <p>Applied scientific and technical environments, with real physical systems and real datasets rather than purely theoretical research.</p>
+        <SectionHeader index="02" kicker={t.directionKicker} title={t.directionTitle}>
+          <p>{t.directionLead}</p>
         </SectionHeader>
         <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {c.directions.map((d, i) => (
@@ -70,8 +75,8 @@ export default function AboutPage() {
 
       {/* Skills */}
       <Container as="section" className="pt-24 sm:pt-32">
-        <SectionHeader index="03" kicker="Toolkit" title="What I actually use">
-          <p>Only tools that appear in my projects. Where usage is limited, it says so.</p>
+        <SectionHeader index="03" kicker={t.toolkitKicker} title={t.toolkitTitle}>
+          <p>{t.toolkitLead}</p>
         </SectionHeader>
         <div className="grid gap-3 sm:grid-cols-2">
           {c.skills.map((g) => (
@@ -96,11 +101,11 @@ export default function AboutPage() {
 
       {/* Philosophy */}
       <Container as="section" className="pt-24 sm:pt-32">
-        <SectionHeader index="04" kicker="Approach" title="How I like to work" />
-        <div className="grid gap-x-10 gap-y-8 md:ml-[220px] md:grid-cols-2">
+        <SectionHeader index="04" kicker={t.approachKicker} title={t.approachTitle} />
+        <div className="grid gap-3 sm:grid-cols-2">
           {c.principles.map((p) => (
-            <div key={p.title} data-reveal>
-              <h3 className="text-fog-50">{p.title}</h3>
+            <div key={p.title} className="rounded-2xl bg-ink-850 p-6" data-reveal>
+              <h3 className="text-lg font-semibold tracking-tight text-fog-50">{p.title}</h3>
               <p className="mt-2 text-fog-400">{p.body}</p>
             </div>
           ))}
