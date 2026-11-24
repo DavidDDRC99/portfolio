@@ -69,7 +69,7 @@ export function PageTitle({ eyebrow, title, muted, children }: { eyebrow: string
         <span className="h-px w-8 bg-fog-500" aria-hidden />
         {eyebrow}
       </p>
-      <h1 className="display text-[56px] text-fog-50 sm:text-[96px] lg:text-[136px]" data-reveal>
+      <h1 className="display text-[min(56px,12.5vw)] text-fog-50 sm:text-[96px] lg:text-[136px]" data-reveal>
         {title}
         {muted && <span className="block text-fog-500">{muted}</span>}
       </h1>

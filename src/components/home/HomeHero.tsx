@@ -1,114 +1,147 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { IsobarField } from "@/components/home/IsobarField";
 import { TrendSparkline } from "@/components/charts/TrendSparkline";
 import type { Trend } from "@/lib/meteo";
 
+type TileCopy = { kicker: string; title: string; body: string };
+
+export type HubLabels = {
+  navLabel: string;
+  classes: TileCopy & { badge: string };
+  vo: TileCopy;
+  apps: TileCopy;
+  info: TileCopy;
+};
+
 /**
- * Editorial hero: a bright cobalt panel with a ghosted surname, a giant first
- * name, crosshair registration marks, the portrait (when provided) and two
- * floating cards — the featured project and a contact prompt.
+ * Landing hub: a compact cobalt panel with who I am in one line, followed by
+ * four large tiles that take the visitor straight to the main sections
+ * (private lessons, the VO-evolution project, applications, about/contact).
  */
 export function HomeHero({
-  firstName,
-  lastName,
+  name,
   tagline,
   role,
-  portrait,
-  featured,
-  contactHref,
   labels,
+  links,
+  featured,
+  apps,
+  contact,
 }: {
-  firstName: string;
-  lastName: string;
+  name: string;
   tagline: string;
   role: string;
-  portrait: string | null;
-  featured: { href: string; title: string; annual: [number, number | null][]; trend: Trend };
-  contactHref: string;
-  labels: { letsTalk: string; talkSub: string; cardTag: string };
+  labels: HubLabels;
+  links: { classes: string; vo: string; apps: string; info: string };
+  featured: { title: string; annual: [number, number | null][]; trend: Trend };
+  apps: string[];
+  contact: { email: string | null; linkedin: string | null; github: string | null };
 }) {
-  const marks = [
-    [8, 14], [33, 14], [58, 14], [83, 14],
-    [8, 52], [83, 52],
-    [8, 88], [33, 88], [58, 88], [83, 88],
-  ];
+  const contactLinks = [
+    contact.email && { label: "Email", href: `mailto:${contact.email}`, external: false },
+    contact.linkedin && { label: "LinkedIn", href: contact.linkedin, external: true },
+    contact.github && { label: "GitHub", href: contact.github, external: true },
+  ].filter(Boolean) as { label: string; href: string; external: boolean }[];
 
   return (
     <section className="px-2 pt-2 sm:px-4 sm:pt-3">
       <div className="relative isolate overflow-hidden rounded-[22px] bg-signal text-white sm:rounded-[32px]">
-        {/* Background field + depth */}
         <div className="absolute inset-0 -z-10">
           <IsobarField />
         </div>
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(120%_80%_at_70%_10%,transparent_30%,rgba(10,20,120,0.45))]" />
 
-        {/* Crosshair registration marks */}
-        {marks.map(([x, y]) => (
-          <span key={`${x}-${y}`} aria-hidden className="crosshairs absolute -z-10 hidden h-[9px] w-[9px] text-white/50 sm:block" style={{ left: `${x}%`, top: `${y}%`, backgroundPosition: "0 4px, 4px 0" }} />
-        ))}
-
-        {/* Ghost surname */}
-        <p aria-hidden className="display pointer-events-none absolute inset-x-0 top-[5%] -z-10 select-none text-center text-[16.5vw] text-white/[0.09] lg:text-[15vw]">
-          {lastName.split(" ")[0]}
-        </p>
-
-        <div className="relative mx-auto grid min-h-[calc(100svh-6rem)] max-w-[1280px] grid-cols-1 px-5 pb-6 pt-10 sm:px-10 sm:pb-10 lg:grid-cols-[1fr_auto] lg:pt-14">
-          {/* Portrait */}
-          {portrait && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={portrait}
-              alt={`Portrait of ${firstName} ${lastName}`}
-              className="pointer-events-none absolute bottom-0 left-1/2 -z-[5] h-[78%] w-auto max-w-none -translate-x-1/2 object-contain object-bottom sm:h-[88%]"
-            />
-          )}
-
-          <div className="flex flex-col justify-between gap-12">
-            <p className="max-w-[300px] pt-[12vh] text-[13px] font-medium uppercase leading-snug tracking-[0.02em] text-white/90 lg:pt-[18vh]" data-reveal>
-              <span className="mr-2 inline-block h-1.5 w-1.5 -translate-y-0.5 rounded-full bg-white" aria-hidden />
-              {tagline}
-            </p>
-
-            <div data-reveal>
-              <p className="mb-3 font-mono text-[12px] uppercase tracking-[0.12em] text-white/80">©{new Date().getFullYear()} · {role}</p>
-              <h1 className="display text-[27vw] text-white sm:text-[22vw] lg:text-[200px] xl:text-[232px]">
-                {firstName}
-                <span className="sr-only"> {lastName}</span>
-              </h1>
+        <div className="mx-auto max-w-[1280px] px-3 pb-3 pt-7 sm:px-8 sm:pb-8 sm:pt-9 lg:px-10">
+          {/* Who */}
+          <div className="grid gap-3 px-1 sm:px-0 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-10">
+            <div>
+              <p className="font-mono text-[11px] uppercase tracking-[0.12em] text-white/75 sm:text-[12px]">{role}</p>
+              <h1 className="display mt-3 text-[34px] text-white sm:text-[56px] lg:text-[60px] xl:text-[72px]">{name}</h1>
             </div>
+            <p className="max-w-[340px] text-[14px] leading-snug text-white/85 sm:text-[16px] lg:pb-2">{tagline}</p>
           </div>
 
-          {/* Floating cards */}
-          <div className="mt-8 flex flex-col gap-4 sm:flex-row lg:mt-0 lg:w-[300px] lg:flex-col lg:justify-between lg:pt-[10vh]">
-            <Link href={featured.href} className="float-a group block rounded-2xl bg-white p-3 text-fog-50 shadow-[0_20px_60px_-20px_rgba(5,10,60,0.6)] transition-transform hover:-translate-y-1 sm:flex-1 lg:flex-none" data-reveal>
-              <div className="rounded-xl bg-ink-900 p-3">
-                <TrendSparkline annual={featured.annual} trend={featured.trend} color="var(--color-signal)" height={330} label={featured.title} />
-              </div>
-              <div className="flex items-center justify-between px-1 pb-1 pt-3 text-[12px]">
-                <span className="flex items-center gap-1.5 font-semibold"><span className="text-signal">✳</span> VO-evolution</span>
-                <span className="text-fog-400">{labels.cardTag}</span>
-              </div>
-            </Link>
+          {/* Hub */}
+          <nav aria-label={labels.navLabel} className="mt-6 sm:mt-8">
+            <ul className="grid grid-cols-2 gap-2 sm:gap-3">
+              <Tile n="01" href={links.classes} copy={labels.classes} badge={labels.classes.badge}>
+                <div className="flex flex-wrap gap-1.5" aria-hidden>
+                  {["∫", "∑", "√", "π", "Δ", "λ"].map((s) => (
+                    <span key={s} className="grid h-9 w-9 place-items-center rounded-lg bg-ink-900 font-mono text-[15px] text-fog-300">{s}</span>
+                  ))}
+                </div>
+              </Tile>
 
-            <Link href={contactHref} className="float-b group flex items-center gap-3 rounded-2xl bg-fog-50 p-3 text-white shadow-[0_20px_60px_-20px_rgba(5,10,60,0.7)] sm:flex-1 lg:flex-none" data-reveal>
-              <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-xl bg-signal text-lg font-bold">
-                {portrait ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={portrait} alt="" className="h-full w-full object-cover object-top" />
-                ) : (
-                  <>DD</>
-                )}
-              </span>
-              <span className="flex-1">
-                <span className="block text-[11px] text-white/60">{labels.letsTalk}</span>
-                <span className="block text-[15px] font-semibold">{firstName} {lastName.split(" ")[0]}</span>
-                <span className="block text-[11px] text-white/60">{labels.talkSub}</span>
-              </span>
-              <span className="grid h-9 w-9 place-items-center rounded-lg bg-white text-fog-50 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden>↗</span>
-            </Link>
-          </div>
+              <Tile n="02" href={links.vo} copy={labels.vo}>
+                <div className="hidden rounded-xl bg-ink-900 px-3 pt-2 sm:block">
+                  <TrendSparkline annual={featured.annual} trend={featured.trend} color="var(--color-signal)" height={90} label={featured.title} />
+                </div>
+              </Tile>
+
+              <Tile n="03" href={links.apps} copy={labels.apps}>
+                <ul className="flex flex-wrap gap-1.5">
+                  {apps.map((a) => (
+                    <li key={a} className="rounded-full border border-ink-600 px-3 py-1 text-[12px] text-fog-300">{a}</li>
+                  ))}
+                </ul>
+              </Tile>
+
+              <Tile n="04" href={links.info} copy={labels.info}>
+                <ul className="relative z-10 flex flex-wrap gap-1.5">
+                  {contactLinks.map((l) => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        target={l.external ? "_blank" : undefined}
+                        rel={l.external ? "noopener noreferrer" : undefined}
+                        className="inline-flex items-center gap-1 rounded-full bg-fog-50 px-3 py-1 text-[12px] font-medium text-white transition-colors hover:bg-signal"
+                      >
+                        {l.label} <span aria-hidden>↗</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </Tile>
+            </ul>
+          </nav>
         </div>
       </div>
     </section>
+  );
+}
+
+/**
+ * One hub tile. The whole card is clickable through a stretched link
+ * (an ::after overlay on the title link), so tiles can still contain their
+ * own secondary links (raised with `relative z-10`) without nesting <a> tags.
+ */
+function Tile({ n, href, copy, badge, children }: { n: string; href: string; copy: TileCopy; badge?: string; children?: ReactNode }) {
+  return (
+    <li className="group relative flex min-h-[132px] flex-col justify-between gap-3 rounded-2xl bg-white p-4 text-fog-50 shadow-[0_20px_60px_-25px_rgba(5,10,60,0.6)] transition-transform duration-200 focus-within:-translate-y-1 hover:-translate-y-1 sm:min-h-[200px] sm:gap-5 sm:p-6">
+      <div>
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.1em] text-fog-400">
+            <span className="text-signal">{n}</span>
+            <span className="hidden sm:inline">{copy.kicker}</span>
+          </span>
+          {badge && (
+            <span className="rounded-full bg-warm/10 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] text-warm">{badge}</span>
+          )}
+        </div>
+        <h2 className="mt-2 text-[19px] font-bold leading-[1.05] tracking-[-0.03em] sm:mt-3 sm:text-[28px] lg:text-[32px]">
+          <Link href={href} className="outline-none after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:after:outline focus-visible:after:outline-2 focus-visible:after:outline-offset-2 focus-visible:after:outline-white">
+            {copy.title}
+          </Link>
+        </h2>
+        <p className="mt-2 hidden max-w-md text-[14px] leading-relaxed text-fog-400 sm:block">{copy.body}</p>
+      </div>
+      <div className="flex items-end justify-between gap-4">
+        <div className="hidden min-w-0 flex-1 sm:block">{children}</div>
+        <span className="ml-auto grid h-8 w-8 shrink-0 place-items-center rounded-full border sm:h-10 sm:w-10 border-ink-600 text-fog-50 transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-white" aria-hidden>
+          ↗
+        </span>
+      </div>
+    </li>
   );
 }

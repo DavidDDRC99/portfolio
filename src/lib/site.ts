@@ -9,6 +9,7 @@ export const site = {
 
 export const nav = [
   { path: "/", key: "home" },
+  { path: "/classes/", key: "lessons" },
   { path: "/about/", key: "about" },
   { path: "/projects/", key: "projects" },
   { path: "/applications/", key: "applications" },

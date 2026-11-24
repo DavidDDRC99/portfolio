@@ -44,14 +44,19 @@ export default async function Home({ params }: Props) {
   return (
     <>
       <HomeHero
-        firstName="David"
-        lastName="Domínguez Ruiz"
+        name="David Domínguez Ruiz"
         tagline={c.profile.tagline}
         role={c.profile.role}
-        portrait={c.profile.portrait}
-        contactHref={lp(locale, "/contact/")}
-        labels={{ letsTalk: t.home.letsTalk, talkSub: t.home.talkSub, cardTag: t.home.cardTag }}
-        featured={{ href: lp(locale, `/projects/${featured.slug}/`), title: `Sabadell Nord, ${tr.first_year}–${tr.last_year}`, annual: tAvg.annual, trend: tr }}
+        labels={t.home.hub}
+        links={{
+          classes: lp(locale, "/classes/"),
+          vo: lp(locale, `/projects/${featured.slug}/`),
+          apps: lp(locale, "/applications/"),
+          info: lp(locale, "/about/"),
+        }}
+        featured={{ title: `Sabadell Nord, ${tr.first_year}–${tr.last_year}`, annual: tAvg.annual, trend: tr }}
+        apps={c.applications.map((a) => a.title)}
+        contact={c.contact}
       />
 
       {/* ── Intro + figures ──────────────────────────────── */}
